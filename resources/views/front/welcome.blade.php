@@ -175,7 +175,7 @@
          </div>
      </div>
  </section>
- @if(count($mobile_product)>0)
+ @if(count($mobile_product)>4)
  <section class="mobile_sec">
      <div class="container">
          <div class="row">

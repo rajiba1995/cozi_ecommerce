@@ -10,7 +10,7 @@
     <link href="https://cdn-uicons.flaticon.com/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('admin/plugins/croppie/croppie.css') }}">
     <link href="{{ asset('admin/css/style.css') }}" rel="stylesheet">
-
+    <link rel="shortcut icon" href="{{asset('frontend/images/favicon.png')}}" type="image/x-icon">
     <title>Luxcozi | Admin @yield('page')</title>
 </head>
 
@@ -19,11 +19,12 @@
         <div class="admin__logo">
             <div class="logo">
                 <a href="{{url('/')}}" target="_blank">
-                    <svg width="322" height="322" viewBox="0 0 322 322" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    {{-- <svg width="322" height="322" viewBox="0 0 322 322" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="231.711" y="47.8629" width="60" height="260" rx="30" transform="rotate(45 231.711 47.8629)" fill="#c10909" />
                         <rect x="236.66" y="137.665" width="60" height="180" rx="30" transform="rotate(45 236.66 137.665)" fill="#c10909" />
                         <rect x="141.908" y="42.9132" width="60" height="180" rx="30" transform="rotate(45 141.908 42.9132)" fill="#c10909" />
-                    </svg>
+                    </svg> --}}
+                    <img src="{{asset('frontend/images/favicon.png')}}"/>
                 </a>
             </div>
             <div class="admin__info">
