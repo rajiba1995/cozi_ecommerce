@@ -64,31 +64,15 @@ class CartController extends Controller
     public function index(Request $request)
     {
        if(Auth::guard('web')->check()){
-        $userId =Auth::guard('web')->user()->id;
-        $cartProductDetails = Cart::where('user_id',$userId)->get();
-       }
-		$couponData = Coupon::all();
-        // // dd($_COOKIE['cartToken']);
-
-        // // cart offers
-        // $currentDate = date('Y-m-d');
-        // $cartOffers = CartOffer::where('status', 1)->whereRaw("date(valid_from) <= '$currentDate' AND date(valid_upto) >= '$currentDate'")->orderBy('min_cart_order', 'desc')->get();
-
-        // if (auth()->guard('web')->check()) {
-        //     $data = $this->cartRepository->viewByUserId(auth()->guard('web')->user()->id);
-        // } else {
-        //     if (!empty($_COOKIE['cartToken'])) {
-        //         $data = $this->cartRepository->viewBytoken($_COOKIE['cartToken']);
-        //     } else {
-        //         $data = [];
-        //     }
-        // }
-
-        // if ($data) {
+            $userId =Auth::guard('web')->user()->id;
+            $mobile = Auth::guard('web')->user()->mobile;
+            $cartProductDetails = Cart::where('user_id',$userId)->get();
+            $couponData = Coupon::where('user_mobile', $mobile)->take(5)->get();
             return view('front.cartList',compact('cartProductDetails','couponData'));
-        // } else {
-            // return view('front.404');
-        // }
+       }else{
+            return redirect()->route('front.user.login');
+       }
+		
     }
 
     /*
