@@ -18,7 +18,8 @@
                         </div>
                         <div class="form-group mb-3">
                             <label class="label-control">Code </label>
-                            <input name="code" type="color" class="form-control" value="{{$data->code}}">
+                            <input name="code"  id="colorpicker" type="color" class="form-control" value="{{$data->code}}">
+                            <input type="text" class="form-control" id="hexcolor" ></input>
                             @error('code') <p class="small text-danger">{{ $message }}</p> @enderror
                         </div>
                         
@@ -31,4 +32,14 @@
         </div>
     </div>
 </section>
+@endsection
+@section('script')
+    <script>
+        $('#colorpicker').on('input',function(){
+            $('#hexcolor').val(this.value);
+        });
+        $('#hexcolor').on('input',function(){
+            $('#colorpicker').val(this.value);
+        });
+    </script>
 @endsection
