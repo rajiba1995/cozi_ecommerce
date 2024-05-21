@@ -19,6 +19,7 @@ class WishlistController extends Controller
 
     public function add(Request $request , $productId) 
     {
+        // dd('check');
         if(Auth::guard('web')->check()){
             $wishlistStore = $this->wishlistRepository->addToWishlist($productId);
             if ($wishlistStore) {
@@ -46,20 +47,7 @@ class WishlistController extends Controller
 
 	public function remove(Request $request) 
     {
-        $request->validate([
-            "product_id" => "required|integer",
-        ]);
-
-        $params = $request->except('_token');
-
-        $wishlistStore = $this->wishlistRepository->addToWishlist($params);
-
-        if ($wishlistStore) {
-            // return response()->json(['status' => 200, 'message' => $wishlistStore]);
-            return redirect()->back()->with('success', 'Product removed from wishlist');
-        } else {
-            // return response()->json(['status' => 400, 'message' => 'Something happened']);
-            return redirect()->back()->with('failure', 'Something happened');
-        }
+        $newEntry = Wishlist::destroy($request->id);
+        return response()->json(['status'=>200]);
     }
 }

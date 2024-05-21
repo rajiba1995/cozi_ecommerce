@@ -88,22 +88,20 @@
                                         </div>
                                     </div>
                                     <div class="wishlist-card-footer">
-                                    @if($item->productDetails)    
-                                        <div class="row align-items-center">
-                                            <div class="col-sm-6">
-                                                <a href="{{route('front.product.details',$item->productDetails->slug)}}" class="wishlist-card-text mb-0 mt-2">Click here to select
-                                                    color &amp; size first</a>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <form action="{{route('front.wishlist.add',$item->productDetails->id)}}">
+                                        @if($item->productDetails)    
+                                            <div class="row align-items-center">
+                                                <div class="col-sm-6">
+                                                    <a href="{{route('front.product.details',$item->productDetails->slug)}}" class="wishlist-card-text mb-0 mt-2">Click here to select
+                                                        color &amp; size first</a>
+                                                </div>
+                                                <div class="col-sm-6">
                                                     <div class="wishlist-remove_btn">
-                                                        <button type="submit" class="remove_btn">Remove from
+                                                        <button type="button" class="remove_btn" data-id="{{$item->id}}">Remove from
                                                             List</button>
                                                     </div>
-                                                </form>
-                                    @endif    
+                                                </div>
                                             </div>
-                                        </div>
+                                        @endif  
                                     </div>
                                 </div>
                                 @endforeach
@@ -118,5 +116,53 @@
  @endsection
  
  @section('script')
- 
+ <script>
+   $(document).ready(function () {
+    $('.remove_btn').on('click', function () {
+        var id = $(this).data('id'); // Get the data-id attribute value
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, remove it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Submit the form via AJAX
+                $.ajax({
+                    url: '{{ route("front.wishlist.remove") }}',
+                    type: 'POST', // Use DELETE method for removal
+                    data: {
+                        id:id,
+                        _token: '{{ csrf_token() }}' // Include CSRF token
+                    },
+                    success: function (response) {
+                        // Handle success
+                        Swal.fire(
+                            'Deleted!',
+                            'Your item has been removed from the wishlist.',
+                            'success'
+                        ).then(() => {
+                            // Optional: Reload the page or update the UI as needed
+                            window.location.reload();
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred while removing the item.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+});
+
+ </script>
  @endsection

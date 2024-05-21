@@ -33,6 +33,6 @@ class WishlistRepository implements WishlistInterface
     }
     public function userWishList(){
         $user_id = Auth::guard('web')->user()->id;
-        return Wishlist::where('user_id',$user_id)->get();
+        return Wishlist::where('user_id',$user_id)->latest('id')->get();
     }
 }

@@ -135,7 +135,7 @@
                     <div class="footer_text">
                         <h4>Useful Links</h4>
                         <ul class="footer_text_menu">
-                            <li><a href="#">My Account</a></li>
+                            <li><a href="{{ route('front.user.profile')}}">My Account</a></li>
                             <li><a href="{{route('front.privacy')}}">Privacy Policy</a></li>
                             <li><a href="#">Term & Conditions</a></li>
                             <li><a href="#">Customer Care</a></li>
