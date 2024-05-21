@@ -65,6 +65,7 @@ Route::name('front.')->group(function () {
     Route::prefix('cart')->name('cart.')->group(function () {
         // Route::get('/', 'Front\CartController@viewByIp')->name('index');
         Route::get('/details', 'Front\CartController@index')->name('index');
+        Route::post('/add-to-checkoout', 'Front\CartController@add_to_checkoout')->name('add_to_checkoout');
         Route::post('/coupon/check', 'Front\CartController@couponCheck')->name('coupon.check');
         Route::post('/coupon/remove', 'Front\CartController@couponRemove')->name('coupon.remove');
         Route::post('/add', 'Front\CartController@add')->name('add');

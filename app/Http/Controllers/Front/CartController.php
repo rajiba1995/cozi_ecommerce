@@ -8,8 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Cart;
 use App\Models\CartOffer;
+use App\Models\ProductColorSize;
 use App\Models\Coupon;
-use Auth;
+use Illuminate\Support\Facades\Auth;
+use DB;
 
 class CartController extends Controller
 {
@@ -66,13 +68,56 @@ class CartController extends Controller
        if(Auth::guard('web')->check()){
             $userId =Auth::guard('web')->user()->id;
             $mobile = Auth::guard('web')->user()->mobile;
-            $cartProductDetails = Cart::where('user_id',$userId)->get();
+            $cartProductDetails = Cart::with('productDetails')->where('user_id',$userId)->get();
             $couponData = Coupon::where('user_mobile', $mobile)->take(5)->get();
             return view('front.cartList',compact('cartProductDetails','couponData'));
        }else{
             return redirect()->route('front.user.login');
        }
-		
+    }
+    public function add_to_checkoout(Request $request){
+        $userId = Auth::guard('web')->user()->id;
+        $exist_checkout = DB::table('checkout')->where('user_id', $userId)->first();
+        if ($exist_checkout) {
+            DB::table('checkout')->where('user_id', $userId)->delete();
+            DB::table('checkout_products')->where('user_id', $userId)->delete();
+        }
+        $data = DB::table('checkout')->insert([
+            'user_id' => $userId,
+            'sub_total_amount' => $request->input('final_sub_total'), // Assuming you have a 'product_id' in your request
+            'discount_amount' => $request->input('final_coupon_amount'), // Assuming you have a 'quantity' in your request
+            'gst_amount' => $request->input('final_gst_amount'), // Assuming you have a 'total_amount' in your request
+            'final_amount' => $request->input('final_total_amount')
+        ]);
+        if($data){
+            $checkout = DB::table('checkout')->where('user_id', $userId)->first();
+            foreach($request->variation as $key =>$item){
+                $ProductColorSize = ProductColorSize::findOrFail($item);
+                if($ProductColorSize){
+                    $gst = $ProductColorSize->productDetails?$ProductColorSize->productDetails->gst:0;
+                    $price = $ProductColorSize->offer_price?$ProductColorSize->offer_price:$ProductColorSize->price;
+                    $gst_amount = ($price * $gst) / 100;
+                    $data = DB::table('checkout_products')->insert([
+                        'user_id' => $userId,
+                        'checkout_id' => $checkout->id, 
+                        'product_id' => $ProductColorSize->product_id, 
+                        'product_name' => $ProductColorSize->productDetails?$ProductColorSize->productDetails->name:"", 
+                        'product_image' => $request->images[$key], 
+                        'product_slug' => $ProductColorSize->productDetails?$ProductColorSize->productDetails->slug:"", 
+                        'product_variation_id' => $item, 
+                        'colour_name' => $ProductColorSize->color_name, 
+                        'size_name' => $ProductColorSize->color_name, 
+                        'sku_code' => $ProductColorSize->code,
+                        'coupon_code' => $request->coupons[$key], 
+                        'price' => $ProductColorSize->price,
+                        'offer_price' => $ProductColorSize->offer_price,
+                        'gst' => $gst_amount, 
+                        'qty' => 1, 
+                    ]);
+                }
+            }
+            return redirect()->route('front.checkout.index');
+        }
     }
 
     /*
