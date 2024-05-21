@@ -73,7 +73,7 @@ class ProductController extends Controller
             "sub_cat_id" => "nullable",
             "collection_id" => "nullable",
             "name" => "required|string|max:255",
-            "short_desc" => "required",
+            "short_desc" => "nullable",
             "desc" => "nullable",
             "price" => "required|integer",
             "offer_price" => "required|integer",
@@ -83,7 +83,7 @@ class ProductController extends Controller
             "style_no" => "nullable|unique:products",
             "image" => "required|mimes:jpg,jpeg,png,svg,gif|max:10000000",
             'gst'=>'required|regex:/^[^\+\-\&\%]+$/',
-            "pack" => "required|string|max:255",
+            "pack" => "nullable|string|max:255",
 
         ]);
 
@@ -151,7 +151,7 @@ class ProductController extends Controller
             "sub_cat_id" => "nullable|integer",
             "collection_id" => "nullable|integer",
             "name" => "required|string|max:255",
-            "short_desc" => "required",
+            "short_desc" => "nullable",
             "desc" => "nullable",
             "price" => "required|integer",
             "offer_price" => "required|integer",
@@ -163,7 +163,7 @@ class ProductController extends Controller
             "size_chart_image" => "nullable",
             "product_images" => "nullable|array",
             'gst'=>'nullable|regex:/^[^\+\-\&\%]+$/',
-            "pack" => "required|string|max:255",
+            "pack" => "nullable|string|max:255",
         ]);
 
         $params = $request->except('_token');

@@ -55,8 +55,8 @@ Route::name('front.')->group(function () {
 
     // wishlist
     Route::prefix('wishlist')->name('wishlist.')->group(function () {
-        // Route::get('/', 'Front\WishlistController@viewByIp')->name('index');
-        Route::post('/add', 'Front\WishlistController@add')->name('add');
+        Route::get('/', 'Front\WishlistController@viewByUserId')->name('index');
+        Route::get('/add/{id}', 'Front\WishlistController@add')->name('add');
         Route::post('/remove', 'Front\WishlistController@remove')->name('remove');
         Route::get('/delete/{id}', 'Front\WishlistController@delete')->name('delete');
     });

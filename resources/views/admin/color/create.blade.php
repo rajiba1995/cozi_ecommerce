@@ -16,7 +16,7 @@
                         <h4 class="page__subtitle">Add New Color</h4>
                         <div class="form-group mb-3">
                             <label class="label-control">Name <span class="text-danger">*</span> </label>
-                            <input type="text" name="name"  placeholder="" class="form-control" value="{{old('name')}}">
+                            <input type="text" name="name" placeholder="" class="form-control" value="{{old('name')}}">
                             @error('name') <p class="small text-danger">{{ $message }}</p> @enderror
                         </div>
                         <div class="form-group mb-3">
@@ -39,7 +39,6 @@
   </div>	
 </section>
 @endsection
-
 @section('script')
     <script>
         $('#colorpicker').on('input',function(){

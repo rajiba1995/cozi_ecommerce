@@ -1,3 +1,4 @@
+
 @extends('front.layout.app')
 @section('content')
 
@@ -43,6 +44,7 @@
                         </div>
                     </div>
                     <h4>Shipping Information</h4>
+
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group mb-4">
@@ -306,6 +308,5 @@
                 $('input[name="shipping_city"]').val('');
             }
         });
-
     </script>
 @endsection

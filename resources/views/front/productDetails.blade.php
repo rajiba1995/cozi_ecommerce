@@ -1,6 +1,11 @@
 @extends('front.layout.app')
    @section('content')
-
+   <style>
+    .product_details_wishlist.active {
+    background-color: red;
+   
+}
+</style>
     <section class="product_details_sec">
         <div class="container">
             <div class="row">
@@ -22,7 +27,7 @@
                         @if($primaryColorSizes)
                             @foreach($primaryColorSizes['images'] as $item)
                             <div class="swiper-slide">
-                                <div class="product_d_slider_img">
+                               <div class="product_d_slider_img">
                                     <img src="{{asset($item->image)}}" alt="">
                                 </div>
                             </div>
@@ -39,18 +44,25 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="product_details_text">
-                        <span class="sku">#UK 100</span>
+                        <span class="sku" style="font-size: 11px;">#{{$data->style_no}}</span>
                         <!--  -->
                         <h3>{{$data->name}}</h3>
                         <div class="product_details_amoutn">
                             <div class="product_span_amoutn">
                                  @if($data->offer_price>0)
+                                     @if($data->price != $data->offer_price)
                                     <div id="price_module"><h4>₹{{$data->offer_price}}<span>₹{{$data->price}}</span></h4></div>
+                                    @else
+                                    <h4>₹{{$data->price}}</h4>
+                                    @endif
                                 @else
                                 <h4>₹{{$data->price}}</h4>
                                 @endif
                             </div>
-                            <a href="#" class="product_details_wishlist">
+                                        @php
+                                            $active_wishhList = active_wishhList($data->id);
+                                        @endphp
+                            <a href="{{route('front.wishlist.add',$data->id)}}" class="product_details_wishlist {{$active_wishhList?'active':''}}">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path

@@ -32,6 +32,9 @@
                                     <a href="{{route('front.user.order')}}">My Orders</a>
                             </li>
                             <li>
+                                    <a href="{{route('front.wishlist.index')}}">My Wishlist</a>
+                            </li>
+                            <li>
                                 <span>Credits</span>
                                 <ul class="account-item">
                                     <li><a href="#">Coupons</a></li>

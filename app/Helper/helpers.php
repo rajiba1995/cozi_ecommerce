@@ -3,6 +3,8 @@
 use App\Models\Order;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Settings;
+use App\Models\Wishlist;
+use Illuminate\Support\Facades\Auth;
 
 // $ip = $_SERVER['REMOTE_ADDR'];
 
@@ -535,4 +537,11 @@ function getLocation($ip){
 
     // dd($result);
     return $payment_det;
+}
+function active_wishhList($product_id){
+    $user_id = "";
+    if (Auth::guard('web')->check()) {
+        $user_id = Auth::guard('web')->user()->id;
+    }
+    return Wishlist::where('product_id', $product_id)->where('user_id', $user_id)->first();
 }

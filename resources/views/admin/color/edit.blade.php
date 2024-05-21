@@ -20,6 +20,7 @@
                             <label class="label-control">Code </label>
                             <input name="code"  id="colorpicker" type="color" class="form-control" value="{{$data->code}}">
                             <input type="text" class="form-control" id="hexcolor" ></input>
+
                             @error('code') <p class="small text-danger">{{ $message }}</p> @enderror
                         </div>
                         

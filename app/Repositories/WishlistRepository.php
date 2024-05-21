@@ -12,25 +12,27 @@ class WishlistRepository implements WishlistInterface
         $this->ip = $_SERVER['REMOTE_ADDR'];
     }
 
-    public function addToWishlist(array $data) 
+    public function addToWishlist($productId) 
     {
-        $collectedData = collect($data);
+            $user_id = Auth::guard('web')->user()->id;
+            $wishlistExists = Wishlist::where('product_id', $productId)->where('user_id', $user_id)->first();
+    
+            if ($wishlistExists) {
+                $newEntry = Wishlist::destroy($wishlistExists->id);
+                return true;
+            } else {
+                $newEntry = new Wishlist;
+                $newEntry->product_id = $productId;
+                $newEntry->ip = $this->ip;
+                $newEntry->user_id = $user_id;
+    
+                $newEntry->save();
+                return true;
+            }
+       
+    }
+    public function userWishList(){
         $user_id = Auth::guard('web')->user()->id;
-
-        // $wishlistExists = Wishlist::where('product_id', $collectedData['product_id'])->where('ip', $this->ip)->first();
-        $wishlistExists = Wishlist::where('product_id', $collectedData['product_id'])->where('user_id', $user_id)->first();
-
-        if ($wishlistExists) {
-            $newEntry = Wishlist::destroy($wishlistExists->id);
-            return "removed";
-        } else {
-            $newEntry = new Wishlist;
-            $newEntry->product_id = $collectedData['product_id'];
-            $newEntry->ip = $this->ip;
-            $newEntry->user_id = $user_id;
-
-            $newEntry->save();
-            return "wishlisted";
-        }
+        return Wishlist::where('user_id',$user_id)->latest('id')->get();
     }
 }

@@ -31,28 +31,6 @@ class CheckoutController extends Controller
         }else{
             return redirect()->route('front.user.login');
        }
-
-        // $currentDate = date('Y-m-d');
-
-        // $cartOffers = CartOffer::where('status', 1)->whereRaw("date(valid_from) <= '$currentDate' AND date(valid_upto) >= '$currentDate'")->orderBy('min_cart_order', 'desc')->get();
-
-        // if (count($data) > 0) {
-        //     $cartData = $this->checkoutRepository->viewCart();
-
-        //     if (Auth::guard('web')->user()) {
-        //         $addressData = $this->checkoutRepository->addressData();
-        //     } else {
-        //         $addressData = null;
-        //     }
-
-        //     if ($cartData) {
-        //         return view('front.checkout.index', compact('cartData', 'addressData', 'cartOffers'));
-        //     } else {
-        //         return redirect()->route('front.cart.index');
-        //     }
-        // } else {
-        //     return redirect()->route('front.cart.index');
-        // }
     }
 
     public function coupon(Request $request)

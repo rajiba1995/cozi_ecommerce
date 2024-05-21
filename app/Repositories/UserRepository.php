@@ -160,7 +160,6 @@ class UserRepository implements UserInterface
     {
         $collectedData = collect($data);
         $userExists = User::findOrFail(Auth::guard('web')->user()->id);
-
         if ($userExists) {
             if (Hash::check($collectedData['old_password'], $userExists->password)) {
                 $userExists->password = Hash::make($collectedData['new_password']);
@@ -176,7 +175,7 @@ class UserRepository implements UserInterface
 
     public function orderDetails()
     {
-        $data = Order::where('email', Auth::guard('web')->user()->email)->where('status',5)->latest('id')->get();
+        $data = Order::where('email', Auth::guard('web')->user()->email)->where('status',4)->latest('id')->get();
         return $data;
     }
 

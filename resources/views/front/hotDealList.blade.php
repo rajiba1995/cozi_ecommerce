@@ -1,6 +1,11 @@
 @extends('front.layout.app')
    @section('content')
-
+   <style>
+    .blue_heart.active {
+    background-color: red;
+   
+}
+</style>
     <section class="all_product_sec">
         <div class="container">
             <form action="" class="all_product_form">
@@ -36,15 +41,20 @@
                                 <a href="{{route('front.product.details',$product->slug)}}" class="deal_img_anch">
                                     <img src="{{asset($product->image)}}" alt="">
                                 </a>
-                                <div class="deal_offer_sec_text">
-                                @if($product->offer_price>0)
-                                @php
-                                $discount_percentage = ($product->price - $product->offer_price) / $product->price * 100;
-                                @endphp
-                                {{ $discount_percentage }}% <br> off 
-                                @endif
-                                </div>
-                                <a href="#" class="blue_heart">
+                                         @php
+                                            $discount_percentage = (($product->price - $product->offer_price) / $product->price) * 100;
+                                        @endphp
+
+                                        @if($discount_percentage > 0)
+                                            <div class="deal_offer_sec_text">
+                                                {{(int)$discount_percentage}}% <br>Off
+                                            </div>
+                                        @endif
+
+                                        @php
+                                            $active_wishhList = active_wishhList($product->id);
+                                        @endphp
+                                <a href="{{route('front.wishlist.add',$product->id)}}" class="blue_heart {{$active_wishhList?'active':''}}">
                                     <svg width="30" height="30" viewBox="0 0 30 30" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -59,12 +69,16 @@
                                     <h4>{{$product->name}}</h4>
                                 </a>
                                 <div class="swiper_deal_flex">
-                                    @if($product->offer_price>0)
-                                    <h5>₹{{$product->offer_price}}<span>₹{{$product->price}}</span></h5>
-                                    @else
-                                    <h5>₹{{$product->price}}</h5>
-                                    @endif
-                                    <a href="#" class="swiper_deal_btn"><svg width="20" height="20" viewBox="0 0 20 20"
+                                            @if($product->offer_price>0)
+                                                @if($product->price != $product->offer_price)
+                                                <h5>₹{{$product->offer_price}}<span>₹{{$product->price}}</span></h5>
+                                                @else
+                                                <h5>₹{{ $product->price }}</h5>
+                                                @endif
+                                            @else
+                                            <h5>₹{{ $product->price }}</h5>         
+                                            @endif
+                                    <a href="{{route('front.product.details',$product->slug)}}" class="swiper_deal_btn"><svg width="20" height="20" viewBox="0 0 20 20"
                                             fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <g clip-path="url(#clip0_53_867)">
                                                 <path

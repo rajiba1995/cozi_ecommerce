@@ -20,7 +20,7 @@ class FrontController extends Controller
         // $collections = Collection::latest('id')->get();
         $products = Product::where('is_trending', 1)->latest('view_count', 'id')->where('status',1)->limit(14)->get();
         $hot_deals = Product::where('is_hotdeal', 1)->latest('id')->where('status',1)->get();
-        $demo_product = Product::groupBy('cat_id')->take(5)->get(); 
+        $demo_product = Product::where('is_feature',1)->take(5)->get(); 
         $mobile_product = Product::where('cat_id',17)->get(); 
         
         // dd($mobile_product);

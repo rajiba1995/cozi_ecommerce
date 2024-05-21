@@ -10,7 +10,7 @@ use App\Models\Product;
 use App\Models\Cart;
 use App\Models\ProductColorSize;
 use App\Models\ProductImage;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
