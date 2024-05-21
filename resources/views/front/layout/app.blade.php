@@ -60,11 +60,16 @@
                         </a>
                     </div>
                     <div class="header_heart header_user_menu">
-                        <a href="#"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <a href="{{route('front.wishlist.index')}}"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M26.0501 5.76258C25.4117 5.12384 24.6537 4.61714 23.8193 4.27144C22.985 3.92574 22.0908 3.7478 21.1876 3.7478C20.2845 3.7478 19.3903 3.92574 18.556 4.27144C17.7216 4.61714 16.9636 5.12384 16.3251 5.76258L15.0001 7.08758L13.6751 5.76258C12.3855 4.47297 10.6364 3.74847 8.81265 3.74847C6.98886 3.74847 5.23976 4.47297 3.95015 5.76258C2.66053 7.0522 1.93604 8.80129 1.93604 10.6251C1.93604 12.4489 2.66053 14.198 3.95015 15.4876L5.27515 16.8126L15.0001 26.5376L24.7251 16.8126L26.0501 15.4876C26.6889 14.8491 27.1956 14.0911 27.5413 13.2568C27.887 12.4225 28.0649 11.5282 28.0649 10.6251C28.0649 9.72198 27.887 8.82771 27.5413 7.99339C27.1956 7.15907 26.6889 6.40103 26.0501 5.76258Z" stroke="#655D5D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </a>
-                        <span class="wish_list_count">5</span>
+                        @if(Auth::guard('web')->check())
+                        <span class="wish_list_count">{{$wishlistCount}}</span>
+                        @else
+                        <span class="wish_list_count">0</span>
+                        @endif
+
                     </div>
                     <div class="header_user header_user_menu">
                           
@@ -82,8 +87,8 @@
                      <ul class="dropdown-menu header_user_dropdown">  
                      @if(Auth::guard('web')->check())
                         <!-- $userId = Auth::guard('web')->user()->id; -->
-                        <li><a class="dropdown-item onclick="event.preventDefault(); document.getElementById("logout-form").submit();">Log out</a></li>
-                        <li><a class="dropdown-item" href="{{ route('front.user.profile') }}">My profile</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log out</a></li>
+                        <li><a class="dropdown-item" href="{{ route('front.user.profile') }}">My account</a></li>
                         @else
                         <li><a class="dropdown-item" href="{{route('front.user.login')}}">Log in</a></li>
                      @endif

@@ -64,8 +64,8 @@ class CartController extends Controller
     public function index(Request $request)
     {
        if(Auth::guard('web')->check()){
-        $userId =Auth::guard('web')->user()->id;
-        $cartProductDetails = Cart::where('user_id',$userId)->get();
+            $userId =Auth::guard('web')->user()->id;
+            $cartProductDetails = Cart::where('user_id',$userId)->get();
        }
 		$couponData = Coupon::all();
         // // dd($_COOKIE['cartToken']);

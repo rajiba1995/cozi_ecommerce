@@ -7,7 +7,7 @@
                 <h4>Account Information</h4>
             </div>
             <div class="row">
-                <div class="col-sm-5 col-lg-3">
+            <div class="col-sm-5 col-lg-3">
                     <!-- <div class="profile_name">
                         <h4>Lux</h4>
                         <h5>Example@gmail.com</h5>
@@ -16,10 +16,13 @@
                     <div class="profile_details">
                         <ul class="account-list">
                             <li>
-                                <a href="{{route('front.user.profile')}}">profile</a>
+                                <a href="{{route('front.user.profile')}}">Profile</a>
                             </li>
                             <li>
                                     <a href="{{route('front.user.order')}}">My Orders</a>
+                            </li>
+                            <li>
+                                    <a href="{{route('front.wishlist.index')}}">My Wishlist</a>
                             </li>
                             <li>
                                 <span>Credits</span>

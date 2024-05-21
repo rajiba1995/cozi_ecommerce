@@ -169,9 +169,6 @@
     font-size: 21px;
     margin-bottom: 15px;
   }
-  .wishlist-card-footer .remove_btn {
-    padding: 10px 15px;
-  }
 }
 @media (max-width: 767px) {
   .header_user_menu a svg {
@@ -268,15 +265,6 @@
   }
   .log_in {
     margin-bottom: 15px;
-  }
-  .profile_info_box h3 {
-    padding-bottom: 15px;
-    font-size: 20px;
-    margin-bottom: 15px;
-}
-  .profile_info {
-    display: block;
-    padding: 15px;
   }
 }
 @media (max-width: 575px) {
@@ -425,85 +413,84 @@
     margin-top: 35px;
   }
 
-  /* Terms and Condition page css start */
-  .terms_condition {
-    padding: 30px 0px;
-  }
-  .terms_condition_text h4 {
-    font-size: 20px;
-    font-weight: 500;
-    margin-bottom: 10px;
-  }
-  .terms_condition p {
-    font-weight: 400;
-    margin-bottom: 10px;
-    font-size: 14px;
-  }
-  .terms_c_menu_li h5 {
-    margin-bottom: 5px;
-    font-size: 16px;
-    font-weight: 500;
-  }
-  .terms_c_menu_li::marker {
-    font-size: 16px;
-    font-weight: 500;
-  }
-  .terms_c_menu_ul {
-    margin-left: 10px;
-  }
-  .terms_c_menu_ul li {
-    list-style-type: disc;
-    font-size: 14px;
-  }
-  .p_disclaimer {
-    font-size: 14px;
-    font-weight: 400 !important;
-  }
-  /* Privacy Policy page css start */
-  .privacy_policy {
-    padding: 30px 0px;
-  }
-  .privacy_policy_text h4 {
-    font-size: 20px;
-    font-weight: 500;
-    margin-bottom: 10px;
-  }
-  .privacy_policy_text_p {
-    font-size: 14px;
-    font-weight: 400;
-  }
-  .privacy_policy_ol_li h5 {
-    margin-bottom: 5px;
-    font-size: 18px;
-    font-weight: 500;
-  }
-  .privacy_policy_ol_li::marker {
-    font-size: 18px;
-    font-weight: 500;
-  }
-  .privacy_policy_ol_sub li {
-    font-size: 14px;
-  }
-  .privacy_policy_ol_sub h6 {
-    font-size: 16px;
-    font-weight: 500;
-    margin: 5px 0px;
-  }
-  .privacy_policy_ol_li p {
-    font-size: 14px;
-    margin: 5px 0px;
-  }
-  .privacy_policy_ol_li_sub li {
-    font-size: 14px;
-  }
-  .privacy_policy_ul_sub li {
-    font-size: 14px;
-  }
+/* Terms and Condition page css start */
+.terms_condition {
+  padding: 30px 0px;
+}
+.terms_condition_text h4 {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.terms_condition p {
+  font-weight: 400;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.terms_c_menu_li h5 {
+  margin-bottom: 5px;
+  font-size: 16px;
+  font-weight: 500;
+}
+.terms_c_menu_li::marker {
+  font-size: 16px;
+  font-weight: 500;
+}
+.terms_c_menu_ul {
+  margin-left: 10px;
+}
+.terms_c_menu_ul li {
+  list-style-type: disc;
+  font-size: 14px;
+}
+.p_disclaimer{
+  font-size: 14px;
+  font-weight: 400 !important;
+}
+/* Privacy Policy page css start */
+.privacy_policy {
+  padding: 30px 0px;
+}
+.privacy_policy_text h4 {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.privacy_policy_text_p {
+  font-size: 14px;
+  font-weight: 400;
+}
+.privacy_policy_ol_li h5 {
+  margin-bottom: 5px;
+  font-size: 18px;
+  font-weight: 500;
+}
+.privacy_policy_ol_li::marker {
+  font-size: 18px;
+  font-weight: 500;
+}
+.privacy_policy_ol_sub li{
+  font-size: 14px;
+}
+.privacy_policy_ol_sub h6 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 5px 0px;
+}
+.privacy_policy_ol_li p{
+font-size: 14px;
+margin: 5px 0px;
+}
+.privacy_policy_ol_li_sub li{
+  font-size: 14px;
+}
+.privacy_policy_ul_sub li {
+  font-size: 14px;
+}
 
-  /* Profile page */
-  .profile_info_box h3 {
-    font-size: 18px;
-  }
+
+
+
 }
 @media (max-width: 479px) {
   .search_for_mob_a svg {

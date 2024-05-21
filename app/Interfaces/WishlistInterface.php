@@ -4,7 +4,7 @@ namespace App\Interfaces;
 
 interface WishlistInterface 
 {
-    public function addToWishlist(array $data);
+    public function addToWishlist($productId);
     // public function viewByIp();
     // public function delete($id);
     // public function empty();

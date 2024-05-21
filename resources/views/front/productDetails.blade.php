@@ -1,6 +1,11 @@
 @extends('front.layout.app')
    @section('content')
-
+   <style>
+    .product_details_wishlist.active {
+    background-color: red;
+   
+}
+</style>
     <section class="product_details_sec">
         <div class="container">
             <div class="row">
@@ -54,7 +59,10 @@
                                 <h4>₹{{$data->price}}</h4>
                                 @endif
                             </div>
-                            <a href="#" class="product_details_wishlist">
+                                        @php
+                                            $active_wishhList = active_wishhList($data->id);
+                                        @endphp
+                            <a href="{{route('front.wishlist.add',$data->id)}}" class="product_details_wishlist {{$active_wishhList?'active':''}}">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
