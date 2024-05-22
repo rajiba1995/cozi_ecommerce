@@ -69,14 +69,14 @@
                                     <h4>{{$product->name}}</h4>
                                 </a>
                                 <div class="swiper_deal_flex">
+                                    @if($product->price != $product->offer_price)
                                             @if($product->offer_price>0)
-                                                @if($product->price != $product->offer_price)
                                                 <h5>₹{{$product->offer_price}}<span>₹{{$product->price}}</span></h5>
                                                 @else
                                                 <h5>₹{{ $product->price }}</h5>
                                                 @endif
                                             @else
-                                            <h5>₹{{ $product->price }}</h5>         
+                                            <h5>₹{{ $product->offer_price }}</h5>         
                                             @endif
                                     <a href="{{route('front.product.details',$product->slug)}}" class="swiper_deal_btn"><svg width="20" height="20" viewBox="0 0 20 20"
                                             fill="none" xmlns="http://www.w3.org/2000/svg">
