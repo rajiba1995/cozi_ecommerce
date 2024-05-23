@@ -38,7 +38,6 @@ class WishlistController extends Controller
         if(Auth::guard('web')->check()){
             $data = $this->wishlistRepository->userWishList(); 
             return view('front.wishlist',compact('data'));
-
         }else{
             return redirect()->route('front.user.login');
         }

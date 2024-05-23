@@ -34,7 +34,7 @@
                                 <span>Account</span>
                                 <ul class="account-item">
                                     <li><a href="{{route('front.user.profile')}}">Profile</a></li>
-                                    <li><a href="{{route('front.wishlist.index')}}">Wishlist</a></li>
+                                    <li><a href="{{route('front.user.wishlist')}}">Wishlist</a></li>
                                     <li><a href="#">Address</a></li>
                                     <li><a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
                                 </ul>
@@ -42,7 +42,7 @@
                             <li>
                                 <span>Legal</span>
                                 <ul class="account-item">
-                                    <li><a href="">Terms &amp; Conditions</a></li>
+                                    <li><a href="#">Terms &amp; Conditions</a></li>
                                     <li><a href="#">Privacy Statement</a></li>
                                     <li><a href="#">Security</a></li>
                                     <li><a href="#">Disclaimer</a></li>
@@ -55,35 +55,23 @@
                     <div class="profile_info">
                         <form action="">
                             <div class="profile_info_box">
-                                <h3>Wishlist</h3>
+                                <h3>Coupon</h3>
                                 @if($data)
                                 @foreach($data as $item)
                                 <div class="wishlist-card">
                                     <div class="wishlist-card-body">
                                         <div class="wishlist-product-card">
-                                            <figure>
-                                                <a href="#"><img src="{{asset($item->productDetails?$item->productDetails->image:'')}}"></a>
-                                            </figure>
-                                            <figcaption>
-                                                <h6>Style #{{$item->productDetails?$item->productDetails->style_no:""}}</h6>
-                                                <h4><a href="#">{{$item->productDetails?$item->productDetails->name:""}}</a></h4>
-                                                <h5>
-                                                @if($item->productDetails)    
-                                                    @if($item->productDetails->offer_price > 0)
-                                                        @if($item->productDetails->price != $item->productDetails->offer_price)
-                                                        Price: <span class="offer_price">₹{{$item->productDetails->offer_price}}</span>
-                                                    |  <del class="actual_price">₹{{$item->productDetails->price}}</del>
-                                                        @else
-                                                        <span class="offer_price">₹{{$item->productDetails->price}}</span>
-                                                        @endif
-                                                    @else
-                                                    <span class="offer_price">₹{{$item->productDetails->price}}</span>
-                                                    @endif
-                                                    <!-- Price: <span>16,490</span> -->
-
-                                                    | Qty: <span>1</span>
+                                            
+                                            <figcaption> 
+                                                @if($item->type == 2)
+                                                <h6>Flat 100 rupees discount in one time</h6>
                                                 @endif
-                                                </h5>
+                                                <h5>{{$item->coupon_code}}</h5>
+                                                @if($item->status == 1)
+                                                <h5><span class="badge bg-success">Active</span></h5>
+                                                @else
+                                                <h5><span class="badge bg-danger">Redeem</span></h5>
+                                                @endif    
                                             </figcaption>
                                         </div>
                                     </div>

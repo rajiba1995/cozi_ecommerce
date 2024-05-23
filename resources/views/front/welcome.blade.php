@@ -18,8 +18,8 @@
      <div class="container">
          <div class="deal_text">    
              <h2>
-                 <span>Hot Deals.</span>
-                 Good things are waiting for you
+                 Products for 
+                 <span>scan & win</span>
              </h2>
          </div>
 

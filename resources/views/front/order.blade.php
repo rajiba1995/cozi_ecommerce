@@ -27,16 +27,16 @@
                             <li>
                                 <span>Credits</span>
                                 <ul class="account-item">
-                                    <li><a href="#">Coupons</a></li>
+                                    <li><a href="{{route('front.user.coupon')}}">Coupons</a></li>
                                 </ul>
                             </li>
                             <li class="">
                                 <span>Account</span>
                                 <ul class="account-item">
-                                    <li><a href="#">Profile</a></li>
-                                    <li><a href="#">Wishlist</a></li>
+                                    <li><a href="{{route('front.user.profile')}}">Profile</a></li>
+                                    <li><a href="{{route('front.wishlist.index')}}">Wishlist</a></li>
                                     <li><a href="#">Address</a></li>
-                                    <li><a href="#">Logout</a></li>
+                                    <li><a href="#"  onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
                                 </ul>
                             </li>
                             <li>
