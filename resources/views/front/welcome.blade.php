@@ -18,8 +18,8 @@
      <div class="container">
          <div class="deal_text">    
              <h2>
-                 <span>Hot Deals.</span>
-                 Good things are waiting for you
+                 Products for 
+                 <span>scan & win</span>
              </h2>
          </div>
 
@@ -40,15 +40,15 @@
                              @endif
                              @endif
                              <p>{{$hot_deal->name}}</p>
-                             @if($hot_deal->offer_price > 0)
-                                @if($hot_deal->price != $hot_deal->offer_price)
-                                    <h5>₹{{ $hot_deal->offer_price }}<span>₹{{ $hot_deal->price }}</span></h5>
+                             @if($hot_deal->price != $hot_deal->offer_price)
+                                @if($hot_deal->offer_price>0)
+                                <h5>₹{{$hot_deal->offer_price}}<span>₹{{$hot_deal->price}}</span></h5>
                                 @else
-                                    <h5>₹{{ $hot_deal->price }}</h5>
+                                <h5>₹{{ $hot_deal->price }}</h5>
                                 @endif
                             @else
-                                <h5>₹{{ $hot_deal->price }}</h5>
-                            @endif
+                            <h5>₹{{ $hot_deal->offer_price }}</h5>         
+                                @endif
 
                              <a class="buy_now_btn" href="{{route('front.product.details',$hot_deal->slug)}}">Buy Now</a>
                          </div>
@@ -129,14 +129,14 @@
                                              <h4>{{$product->name}}</h4>
                                          </a>
                                          <div class="swiper_deal_flex">
+                                             @if($product->price != $product->offer_price)
                                              @if($product->offer_price>0)
-                                                @if($product->price != $product->offer_price)
                                                 <h5>₹{{$product->offer_price}}<span>₹{{$product->price}}</span></h5>
                                                 @else
                                                 <h5>₹{{ $product->price }}</h5>
                                                 @endif
                                             @else
-                                            <h5>₹{{ $product->price }}</h5>         
+                                            <h5>₹{{ $product->offer_price }}</h5>         
                                              @endif
                                              <a href="{{route('front.product.details',$product->slug)}}" class="swiper_deal_btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                      <g clip-path="url(#clip0_53_867)">
@@ -175,7 +175,10 @@
                                  <a href="{{route('front.product.details',$mobile_product[0]->slug)}}" class="mobile_img_ancher">
                                      <img src="{{asset($mobile_product[0]->image)}}" alt="">
                                  </a>
-                                 <a class=" mobile_heart blue_heart" href="#">
+                                @php
+                                 $active_wishhList = active_wishhList($mobile_product[0]->id);
+                              @endphp   
+                                 <a class=" mobile_heart blue_heart {{$active_wishhList ? 'active' : ''}}" href="{{route('front.wishlist.add',$mobile_product[0]->id)}}">
                                      <svg class="blue_heart_fill" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                                          <path d="M26.05 5.76088C25.4116 5.12213 24.6535 4.61543 23.8192 4.26973C22.9849 3.92403 22.0906 3.74609 21.1875 3.74609C20.2844 3.74609 19.3902 3.92403 18.5558 4.26973C17.7215 4.61543 16.9635 5.12213 16.325 5.76088L15 7.08588L13.675 5.76088C12.3854 4.47126 10.6363 3.74676 8.81253 3.74676C6.98874 3.74676 5.23964 4.47126 3.95003 5.76088C2.66041 7.05049 1.93591 8.79958 1.93591 10.6234C1.93591 12.4472 2.66041 14.1963 3.95003 15.4859L5.27503 16.8109L15 26.5359L24.725 16.8109L26.05 15.4859C26.6888 14.8474 27.1955 14.0894 27.5412 13.2551C27.8869 12.4207 28.0648 11.5265 28.0648 10.6234C28.0648 9.72027 27.8869 8.82601 27.5412 7.99168C27.1955 7.15736 26.6888 6.39932 26.05 5.76088Z" stroke="#631096" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                      </svg>
@@ -186,9 +189,15 @@
                                      <h4>{{$mobile_product[0]->name}}</h4>
                                  </a>
                                  <div class="swiper_deal_flex">
-                                 @if($mobile_product[0]->offer_price>0)
-                                 <h5>₹{{$mobile_product[0]->offer_price}}<span>₹{{$mobile_product[0]->price}}</span></h5>
-                                 @endif
+                                    @if($mobile_product[0]->price != $mobile_product[0]->offer_price)
+                                    @if($mobile_product[0]->offer_price>0)
+                                       <h5>₹{{$mobile_product[0]->offer_price}}<span>₹{{$mobile_product[0]->price}}</span></h5>
+                                       @else
+                                       <h5>₹{{ $mobile_product[0]->price }}</h5>
+                                       @endif
+                                   @else
+                                   <h5>₹{{ $mobile_product[0]->offer_price }}</h5>         
+                                    @endif
                                      <a href="#" class="swiper_deal_btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                              <g clip-path="url(#clip0_53_867)">
                                                  <path d="M7.50002 18.3346C7.96026 18.3346 8.33335 17.9615 8.33335 17.5013C8.33335 17.0411 7.96026 16.668 7.50002 16.668C7.03978 16.668 6.66669 17.0411 6.66669 17.5013C6.66669 17.9615 7.03978 18.3346 7.50002 18.3346Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -213,7 +222,10 @@
                                  <a href="{{route('front.product.details',$mobile_product[1]->slug)}}" class="mobile_img_ancher">
                                      <img src="{{asset($mobile_product[1]->image)}}" alt="">
                                  </a>
-                                 <a class="mobile_heart blue_heart" href="#">
+                                 @php
+                                    $active_wishhList = active_wishhList($mobile_product[1]->id);
+                                 @endphp   
+                                 <a class="mobile_heart blue_heart {{$active_wishhList ? 'active' : ''}}" href="{{route('front.wishlist.add',$mobile_product[1]->id)}}">
                                      <svg class="blue_heart_fill" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                                          <path d="M26.05 5.76088C25.4116 5.12213 24.6535 4.61543 23.8192 4.26973C22.9849 3.92403 22.0906 3.74609 21.1875 3.74609C20.2844 3.74609 19.3902 3.92403 18.5558 4.26973C17.7215 4.61543 16.9635 5.12213 16.325 5.76088L15 7.08588L13.675 5.76088C12.3854 4.47126 10.6363 3.74676 8.81253 3.74676C6.98874 3.74676 5.23964 4.47126 3.95003 5.76088C2.66041 7.05049 1.93591 8.79958 1.93591 10.6234C1.93591 12.4472 2.66041 14.1963 3.95003 15.4859L5.27503 16.8109L15 26.5359L24.725 16.8109L26.05 15.4859C26.6888 14.8474 27.1955 14.0894 27.5412 13.2551C27.8869 12.4207 28.0648 11.5265 28.0648 10.6234C28.0648 9.72027 27.8869 8.82601 27.5412 7.99168C27.1955 7.15736 26.6888 6.39932 26.05 5.76088Z" stroke="#631096" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                      </svg>
@@ -224,9 +236,15 @@
                                      <h4>{{$mobile_product[1]->name}}</h4>
                                  </a>
                                  <div class="swiper_deal_flex">
-                                     @if($mobile_product[1]->offer_price>0)
-                                     <h5>₹{{$mobile_product[1]->offer_price}}<span>₹{{$mobile_product[1]->price}}</span></h5>
-                                     @endif
+                                    @if($mobile_product[1]->price != $mobile_product[1]->offer_price)
+                                    @if($mobile_product[1]->offer_price>0)
+                                       <h5>₹{{$mobile_product[1]->offer_price}}<span>₹{{$mobile_product[1]->price}}</span></h5>
+                                       @else
+                                       <h5>₹{{ $mobile_product[1]->price }}</h5>
+                                       @endif
+                                   @else
+                                   <h5>₹{{ $mobile_product[1]->offer_price }}</h5>         
+                                    @endif
                                      <a href="#" class="swiper_deal_btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                              <g clip-path="url(#clip0_53_867)">
                                                  <path d="M7.50002 18.3346C7.96026 18.3346 8.33335 17.9615 8.33335 17.5013C8.33335 17.0411 7.96026 16.668 7.50002 16.668C7.03978 16.668 6.66669 17.0411 6.66669 17.5013C6.66669 17.9615 7.03978 18.3346 7.50002 18.3346Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -251,7 +269,10 @@
                                  <a href="{{route('front.product.details',$mobile_product[2]->slug)}}" class="mobile_img_ancher">
                                      <img src="{{asset($mobile_product[2]->image)}}" alt="">
                                  </a>
-                                 <a class=" mobile_heart blue_heart" href="#">
+                              @php
+                                 $active_wishhList = active_wishhList($mobile_product[2]->id);
+                             @endphp
+                                 <a class=" mobile_heart blue_heart {{$active_wishhList? 'active' : ''}}" href="{{route('front.wishlist.add',$mobile_product[2]->id)}}">
                                      <svg class="blue_heart_fill" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                                          <path d="M26.05 5.76088C25.4116 5.12213 24.6535 4.61543 23.8192 4.26973C22.9849 3.92403 22.0906 3.74609 21.1875 3.74609C20.2844 3.74609 19.3902 3.92403 18.5558 4.26973C17.7215 4.61543 16.9635 5.12213 16.325 5.76088L15 7.08588L13.675 5.76088C12.3854 4.47126 10.6363 3.74676 8.81253 3.74676C6.98874 3.74676 5.23964 4.47126 3.95003 5.76088C2.66041 7.05049 1.93591 8.79958 1.93591 10.6234C1.93591 12.4472 2.66041 14.1963 3.95003 15.4859L5.27503 16.8109L15 26.5359L24.725 16.8109L26.05 15.4859C26.6888 14.8474 27.1955 14.0894 27.5412 13.2551C27.8869 12.4207 28.0648 11.5265 28.0648 10.6234C28.0648 9.72027 27.8869 8.82601 27.5412 7.99168C27.1955 7.15736 26.6888 6.39932 26.05 5.76088Z" stroke="#631096" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                      </svg>
@@ -262,9 +283,15 @@
                                      <h4>{{$mobile_product[2]->name}}</h4>
                                  </a>
                                  <div class="swiper_deal_flex">
-                                     @if($mobile_product[2]->offer_price>0)
-                                     <h5>₹{{$mobile_product[2]->offer_price}}<span>₹{{$mobile_product[2]->price}}</span></h5>
-                                     @endif
+                                    @if($mobile_product[2]->price != $mobile_product[2]->offer_price)
+                                    @if($mobile_product[2]->offer_price>0)
+                                       <h5>₹{{$mobile_product[2]->offer_price}}<span>₹{{$mobile_product[2]->price}}</span></h5>
+                                       @else
+                                       <h5>₹{{ $mobile_product[2]->price }}</h5>
+                                       @endif
+                                   @else
+                                   <h5>₹{{ $mobile_product[2]->offer_price }}</h5>         
+                                    @endif
                                      <a href="#" class="swiper_deal_btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                              <g clip-path="url(#clip0_53_867)">
                                                  <path d="M7.50002 18.3346C7.96026 18.3346 8.33335 17.9615 8.33335 17.5013C8.33335 17.0411 7.96026 16.668 7.50002 16.668C7.03978 16.668 6.66669 17.0411 6.66669 17.5013C6.66669 17.9615 7.03978 18.3346 7.50002 18.3346Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -289,7 +316,10 @@
                                  <a href="{{route('front.product.details',$mobile_product[3]->slug)}}" class="mobile_img_ancher">
                                      <img src="{{asset($mobile_product[3]->image)}}" alt="">
                                  </a>
-                                 <a class=" mobile_heart blue_heart" href="#">
+                                 @php
+                                    $active_wishhList = active_wishhList($mobile_product[3]->id);
+                                @endphp
+                                 <a class=" mobile_heart blue_heart {{$active_wishhList?'active':''}}" href="{{route('front.wishlist.add',$mobile_product[3]->id)}}">
                                      <svg class="blue_heart_fill" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                                          <path d="M26.05 5.76088C25.4116 5.12213 24.6535 4.61543 23.8192 4.26973C22.9849 3.92403 22.0906 3.74609 21.1875 3.74609C20.2844 3.74609 19.3902 3.92403 18.5558 4.26973C17.7215 4.61543 16.9635 5.12213 16.325 5.76088L15 7.08588L13.675 5.76088C12.3854 4.47126 10.6363 3.74676 8.81253 3.74676C6.98874 3.74676 5.23964 4.47126 3.95003 5.76088C2.66041 7.05049 1.93591 8.79958 1.93591 10.6234C1.93591 12.4472 2.66041 14.1963 3.95003 15.4859L5.27503 16.8109L15 26.5359L24.725 16.8109L26.05 15.4859C26.6888 14.8474 27.1955 14.0894 27.5412 13.2551C27.8869 12.4207 28.0648 11.5265 28.0648 10.6234C28.0648 9.72027 27.8869 8.82601 27.5412 7.99168C27.1955 7.15736 26.6888 6.39932 26.05 5.76088Z" stroke="#631096" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                      </svg>
@@ -300,9 +330,15 @@
                                      <h4>{{$mobile_product[3]->name}}</h4>
                                  </a>
                                  <div class="swiper_deal_flex">
-                                     @if($mobile_product[3]->offer_price>0)
-                                     <h5>₹{{$mobile_product[3]->offer_price}}<span>₹{{$mobile_product[3]->price}}</span></h5>
-                                     @endif
+                                    @if($mobile_product[3]->price != $mobile_product[3]->offer_price)
+                                    @if($mobile_product[3]->offer_price>0)
+                                       <h5>₹{{$mobile_product[3]->offer_price}}<span>₹{{$mobile_product[3]->price}}</span></h5>
+                                       @else
+                                       <h5>₹{{ $mobile_product[3]->price }}</h5>
+                                       @endif
+                                   @else
+                                   <h5>₹{{ $mobile_product[3]->offer_price }}</h5>         
+                                    @endif
                                      <a href="#" class="swiper_deal_btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                              <g clip-path="url(#clip0_53_867)">
                                                  <path d="M7.50002 18.3346C7.96026 18.3346 8.33335 17.9615 8.33335 17.5013C8.33335 17.0411 7.96026 16.668 7.50002 16.668C7.03978 16.668 6.66669 17.0411 6.66669 17.5013C6.66669 17.9615 7.03978 18.3346 7.50002 18.3346Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />

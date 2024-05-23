@@ -195,7 +195,8 @@ class UserRepository implements UserInterface
 
     public function couponList()
     {
-        $data = Coupon::orderBy('end_date', 'desc')->get();
+        $user_id = Auth::guard('web')->user()->mobile;
+        $data = Coupon::where('user_mobile',$user_id)->latest('id')->get();
         return $data;
     }
 }
