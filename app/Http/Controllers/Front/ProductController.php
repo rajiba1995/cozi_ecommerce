@@ -49,6 +49,7 @@ class ProductController extends Controller
     public function detail(Request $request, $slug)
     {
         $data = $this->productRepository->listBySlug($slug);
+        // dd($data);
 
         if ($data) {
             $images = $this->productRepository->listImagesById($data->id);

@@ -196,6 +196,10 @@ class FrontController extends Controller
     {
         return view('front.privacyPolicy');
     }
+	public function TremsAndConditions(Request $request)
+    {
+        return view('front.terms_conditions');
+    }
 
  
 }

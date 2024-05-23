@@ -132,13 +132,23 @@
                         </form>
                         <p id="Error_show" class="text-danger test-sm"></p>
                         <h4 class="product_details_h4">Product Details</h4>
-                        @if ($data->desc) <p>{!! $data->desc !!}</p> @endif
-                        <!-- <div class="product_info">
-                            <h6>Fabric:<span>Cotton, Cotton Blend, 100% Cotton, Modal</span></h6>
-                            <h6>Wash Care:<span>Machine Wash, Hand Wash, Do Not Bleach, Do Not Iron</span></h6>
-                            <h6>Pattern:<span>Solid / Printed / Stripe /Colorblocked</span></h6>
-                        </div> -->
-                        <h5>*No returns or exchanges permitted. <a class="term_c" href="#">T&C apply</a></h5>
+                        @if ($data->short_desc)
+                        <p>{!! $data->short_desc !!}</p>
+                        @else
+                        <p>{!! $data->desc !!}</p>
+                        @endif
+                        <div class="product_info">
+                            @if($data->fabric)
+                            <h6>Fabric:<span>{{$data->fabric}}</span></h6>
+                            @endif
+                            @if($data->wash_care)
+                            <h6>Wash Care:<span>{{$data->wash_care}}</span></h6>
+                            @endif
+                            @if($data->pattern)
+                            <h6>Pattern:<span>{{$data->pattern}}</span></h6>
+                            @endif
+                        </div>
+                        <h5>*No returns or exchanges permitted. <a class="term_c" href="{{route('front.terms.conditions')}}">T&C apply</a></h5>
                     </div>
                 </div>
             </div>

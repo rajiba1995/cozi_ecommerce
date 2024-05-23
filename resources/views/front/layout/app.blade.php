@@ -137,7 +137,7 @@
                         <ul class="footer_text_menu">
                             <li><a href="{{ route('front.user.profile')}}">My Account</a></li>
                             <li><a href="{{route('front.privacy')}}">Privacy Policy</a></li>
-                            <li><a href="#">Term & Conditions</a></li>
+                            <li><a href="{{route('front.terms.conditions')}}">Term & Conditions</a></li>
                             <li><a href="#">Customer Care</a></li>
                         </ul>
                     </div>

@@ -23,6 +23,7 @@ Route::name('front.')->group(function () {
         
     Route::get('/', 'Front\FrontController@index')->name('home');
     Route::get('/privacy-policy', 'Front\FrontController@privacy')->name('privacy');
+    Route::get('/terms-condiions', 'Front\FrontController@TremsAndConditions')->name('terms.conditions');
     Route::post('/subscribe', 'Front\FrontController@mailSubscribe')->name('subscription');
 
     // category detail
