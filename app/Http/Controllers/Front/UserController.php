@@ -13,7 +13,7 @@ use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -66,7 +66,8 @@ class UserController extends Controller
                     if ($save) {
                         $credentials = $request->only('mobile', 'password');
                         if (Auth::attempt($credentials)) {
-                            return redirect()->intended('/')->with('success', 'Registration successful');
+                            $intendedUrl = Session::pull('url.intended', route('front.home'));
+                            return redirect()->intended($intendedUrl)->with('success', 'Registration successful');
                         } else {
                             return redirect()->route('front.user.login')->with('failure', 'Please enter valid credentials');
                         }
@@ -116,7 +117,8 @@ class UserController extends Controller
             //     setcookie('cartToken', NULL, 1);
             //     // setcookie('cartToken', time() - 3600);
             // }
-            return redirect()->intended('/');
+            $intendedUrl = Session::pull('url.intended', route('front.home'));
+            return redirect()->intended($intendedUrl);
             // return redirect()->url('home');
         } else {
             return redirect()->route('front.user.login')->withInput($request->all())->with('failure', 'Please enter valid credentials');

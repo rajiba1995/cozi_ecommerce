@@ -23,10 +23,10 @@ class WishlistController extends Controller
         if(Auth::guard('web')->check()){
             $wishlistStore = $this->wishlistRepository->addToWishlist($productId);
             if ($wishlistStore) {
-                return redirect()->back()->with('success', 'successfully added');
+                return redirect()->back()->with('success', 'Successfully added to your wishlist.');
             } else {
                 // return response()->json(['status' => 400, 'message' => 'Something happened']);
-                return redirect()->back()->with('failure', 'Something happened');
+                 return redirect()->back()->with('success', 'Successfully removed from your wishlist.');
             }
         }else{
             return redirect()->route('front.user.login');

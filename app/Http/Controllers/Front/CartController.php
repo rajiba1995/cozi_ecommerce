@@ -68,7 +68,7 @@ class CartController extends Controller
        if(Auth::guard('web')->check()){
             $userId =Auth::guard('web')->user()->id;
             $mobile = Auth::guard('web')->user()->mobile;
-            $cartProductDetails = Cart::with('productDetails')->where('user_id',$userId)->get();
+            $cartProductDetails = Cart::with('productDetails')->latest()->where('user_id',$userId)->get();
             $couponData = Coupon::where('user_mobile', $mobile)->take(5)->get();
             return view('front.cartList',compact('cartProductDetails','couponData'));
        }else{
@@ -91,12 +91,30 @@ class CartController extends Controller
         ]);
         if($data){
             $checkout = DB::table('checkout')->where('user_id', $userId)->first();
+            $sub_total_amount = 0;
+            $total_discount_amount = 0;
+            $total_gst_amount = 0;
+            $total_final_amount = 0;
+            $count = 0;
             foreach($request->variation as $key =>$item){
-                $ProductColorSize = ProductColorSize::findOrFail($item);
+                $ProductColorSize = ProductColorSize::where('id', $item)->first();
                 if($ProductColorSize){
-                    $gst = $ProductColorSize->productDetails?$ProductColorSize->productDetails->gst:0;
                     $price = $ProductColorSize->offer_price?$ProductColorSize->offer_price:$ProductColorSize->price;
+                    $gst = $ProductColorSize->productDetails?$ProductColorSize->productDetails->gst:0;
+                    // Calculate GST amount
                     $gst_amount = ($price * $gst) / 100;
+                    // Accumulate GST amount for all items
+                    $total_gst_amount += $gst_amount;
+                    // Calculate price excluding GST for the current item
+                    // $price_excluding_gst = $price - $gst_amount;
+                    // Accumulate price excluding GST for all items
+                    // $total_price_excluding_gst += $price_excluding_gst;
+                    $sub_total_amount += $price;
+                    $discount_amount =$request->coupons[$key]?100:0;
+                    $total_discount_amount += $discount_amount;
+                    $final_amount = $price-$discount_amount;
+                    $total_final_amount +=$final_amount;
+
                     $data = DB::table('checkout_products')->insert([
                         'user_id' => $userId,
                         'checkout_id' => $checkout->id, 
@@ -114,9 +132,18 @@ class CartController extends Controller
                         'gst' => $gst_amount, 
                         'qty' => 1, 
                     ]);
+                    $count += 1;
                 }
             }
-            return redirect()->route('front.checkout.index');
+            DB::table('checkout')
+            ->where('user_id', $userId) // Assuming $checkoutId is the ID of the record you want to update
+            ->update([
+                'sub_total_amount' => $sub_total_amount,
+                'discount_amount' => $total_discount_amount,
+                'gst_amount' => $total_gst_amount,
+                'final_amount' => $total_final_amount
+            ]);
+            return redirect()->route('front.checkout.index')->with('success', ''.$count.' items successfully added');
         }
     }
 

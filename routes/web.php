@@ -82,6 +82,12 @@ Route::name('front.')->group(function () {
         Route::post('/payment/store', 'Front\CheckoutController@paymentStore')->name('payment.store');
         Route::view('/complete', 'front.checkout.complete')->name('complete');
     });
+    Route::prefix('payment')->name('payment.')->group(function () {
+        Route::post('/order', 'Front\CheckoutController@createOrder')->name('createOrder');
+        Route::post('/success', 'Front\CheckoutController@success')->name('success');
+        Route::post('/failure', 'Front\CheckoutController@failure')->name('failure');
+        Route::post('/webhook', 'Front\CheckoutController@webhook')->name('webhook');
+    });
 
     // faq
     Route::prefix('faq')->name('faq.')->group(function () {

@@ -75,7 +75,7 @@
                  <div class="product_grid_img_text product_grid_img_text_lg">
                      <h3>{{$item->name}}
                      </h3>
-                     <a class="product_buy" href="{{route('front.product.details',$demo_product[2]->slug)}}">Buy Now</a>
+                     <a class="product_buy" href="{{route('front.product.details',$item->slug)}}">Buy Now</a>
                  </div>
              </div>
             @endforeach

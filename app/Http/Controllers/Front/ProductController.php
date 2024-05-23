@@ -148,7 +148,7 @@ class ProductController extends Controller
                 $cart->product_id = $request->productId;
                 $cart->product_name = $request->productName;
                 $cart->product_style_no = $request->productStyleNo;
-                $cart->product_slug = $request->product_slug;
+                $cart->product_slug = $request->productSlug;
                 $cart->product_variation_id = $request->variationId ;
                 $cart->price = $request->price;
                 $cart->offer_price = $request->offer_price;
@@ -156,10 +156,12 @@ class ProductController extends Controller
                 $cart->product_image = $image;
                 $cart->save();
             }
-        return redirect()->back()->with('success','You successfully added '.$quantityToAdd.' quantity for this product');
-    }else{
-        return redirect()->route('front.user.login')->with('error','You should login first before added to cart ');
-    }
+            return redirect()->back()->with('success',''.$quantityToAdd.' items successfully added to your cart.');
+        }else{
+            $route = route('front.product.details', $request->productSlug);
+            session(['url.intended' => $route]);
+            return redirect()->route('front.user.login')->with('warning','You should log in first before adding items to your cart.');
+        }
 
     }
 

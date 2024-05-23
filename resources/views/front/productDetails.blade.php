@@ -44,7 +44,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="product_details_text">
-                        <span class="sku" style="font-size: 11px;">#{{$data->style_no}}</span>
+                        <span class="sku" style="font-size: 11px;">#{{strtoupper($data->style_no)}}</span>
                         <!--  -->
                         <h3>{{$data->name}}</h3>
                         <div class="product_details_amoutn">
@@ -59,9 +59,9 @@
                                 <h4>₹{{$data->price}}</h4>
                                 @endif
                             </div>
-                                        @php
-                                            $active_wishhList = active_wishhList($data->id);
-                                        @endphp
+                            @php
+                                $active_wishhList = active_wishhList($data->id);
+                            @endphp
                             <a href="{{route('front.wishlist.add',$data->id)}}" class="product_details_wishlist {{$active_wishhList?'active':''}}">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -82,7 +82,7 @@
                                     <div class="product_info_form_color">
                                         @if($availableColor)
                                         @foreach($availableColor as $itemKey =>$color)
-                                        <input style="background-color: {{$color->code}};" class="form-check-input form_color_input" type="radio" name="choose_color" id="inline_Radio{{$color->id}}" value="{{$color->id}}" onclick="getColorId({{$color->id}},{{$data->id}})">
+                                        <input style="background-color: {{$color->code}};" class="form-check-input form_color_input" type="radio" name="choose_color" id="inline_Radio{{$color->id}}" value="{{$color->id}}" onclick="getColorId('{{$color->id}}','{{$data->id}}')">
                                         @endforeach
                                         @endif
                                     </div>
@@ -119,15 +119,15 @@
                                         Cart</button>
                                            
                                 </div>
-                                            @if (session('warning'))
-                                                <p class="text-danger" id="message_div">
-                                                    {{ session('warning') }}
-                                                </p>
-                                            @elseif  (session('success'))
-                                                <p class="text-success" id="message_div">
-                                                    {{ session('success') }}
-                                                </p>  
-                                            @endif
+                                {{-- @if (session('warning'))
+                                    <p class="text-danger" id="message_div">
+                                        {{ session('warning') }}
+                                    </p>
+                                @elseif  (session('success'))
+                                    <p class="text-success" id="message_div">
+                                        {{ session('success') }}
+                                    </p>  
+                                @endif --}}
                             </div>
                         </form>
                         <p id="Error_show" class="text-danger test-sm"></p>
@@ -159,15 +159,18 @@
                                     <a href="{{route('front.product.details',$product->slug)}}" class="deal_img_anch">
                                         <img src="{{asset($product->image)}}" alt="">
                                     </a>
+                                    @if($product->offer_price>0 && $product->price != $product->offer_price)
                                     <div class="deal_offer_sec_text">
-                                    @if($product->offer_price>0)
-                                    @php
-                                    $discount_percentage = ($product->price - $product->offer_price) / $product->price * 100;
-                                    @endphp
-                                    {{ $discount_percentage }}% <br>Off
-                                    @endif
+                                        @php
+                                        $discount_percentage = (($product->price - $product->offer_price) / $product->price) * 100;
+                                        @endphp
+                                    {{(int) $discount_percentage }}% <br>Off
                                     </div>
-                                    <a href="#" class="blue_heart">
+                                    @endif
+                                    @php
+                                        $active_wishhList = active_wishhList($product->id);
+                                    @endphp
+                                    <a href="{{route('front.wishlist.add',$product->id)}}" class="product_details_wishlist blue_heart {{$active_wishhList?'active':''}}">
                                         <svg width="30" height="30" viewBox="0 0 30 30" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <path
@@ -187,7 +190,7 @@
                                         @else
                                         <h5>₹{{$product->price}}</h5>
                                         @endif
-                                        <a href="#" class="swiper_deal_btn"><svg width="20" height="20" viewBox="0 0 20 20"
+                                        <a href="{{route('front.product.details',$product->slug)}}" class="swiper_deal_btn"><svg width="20" height="20" viewBox="0 0 20 20"
                                                 fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <g clip-path="url(#clip0_53_867)">
                                                     <path
@@ -259,24 +262,30 @@
                     $('#color_wise_image').html("");
                         var baseUrl = "{{ url('/') }}";
                         var isFirstImage = true; // Flag to track if it's the first image
-
+                        const countImages = response.images.length;
                         response.images.forEach(function(image_data, index) {
-                            if (isFirstImage) { // Check if it's the first image
-                                const imageUrl = baseUrl + '/' + image_data.image; // Construct the image URL
-                                const imageHtml = `<div class="swiper-slide swiper-slide-active" style="width: 636px; margin-right: 10px;">
-                                    <img src="${imageUrl}" alt="">
-                                </div>`;
-                                
-                                $('#color_wise_image').append(imageHtml);
-
-                                isFirstImage = false; // Set the flag to false after processing the first image
+                            const imageUrl = baseUrl + '/' + image_data.image; // Construct the image URL
+                            let slideClass;
+                            if (index === 0) {
+                                index += 1;
+                                slideClass = 'swiper-slide-active';
+                            } else if(index===1){
+                                index += 1;
+                                slideClass = 'swiper-slide-next';
+                            }else{
+                                index += 1;
+                                slideClass = '';
                             }
+
+                            const imageHtml = `<div class="swiper-slide ${slideClass}" role="group" aria-label="${index} / ${countImages}">
+                                <img src="${imageUrl}" alt=""></div>`;
+                            
+                            $('#color_wise_image').append(imageHtml);
                         });
 
                         
                     $('#color_wise_slider_images').html("");
                     var baseUrl = "{{ url('/') }}";
-                    const countImages = response.images.length;
                     response.images.forEach(function(image_data, index) {
                                 // console.log(image_data);
                                 const imageUrl = baseUrl + '/' + image_data.image; // Construct the image URL
@@ -297,7 +306,6 @@
                                         <img src="${imageUrl}" alt="">
                                     </div>
                                 </div>`;
-
                                 
                                 $('#color_wise_slider_images').append(imageHtml);
                             
@@ -317,17 +325,17 @@
         $('#variationId').val(variation_id);
         $('#price').val(price);
         $('#offer_price').val(offer_price);
-        if(!isNaN(price) && !isNaN(offer_price)){ // Check if both prices exist
+        if (price > 0 && offer_price > 0 && price != offer_price) { // Check if both prices exist and are greater than 0
             const price_data = `<h4>₹${offer_price}<span>₹${price}</span></h4>`;
             $('#price_module').html(price_data); // Use html() instead of append() to replace existing content
-            // console.log('if')
-        } else if (!isNaN(offer_price)) { // Check if only offer_price exists
-            // console.log('else if')
-            const price_data = `<h4>₹${offer_price}</h4>`;
+        } else if (price == offer_price && price > 0) { // Check if only offer_price exists and is equal to price
+            const price_data = `<h4>₹${price}</h4>`;
+            $('#price_module').html(price_data); // Use html() instead of append() to replace existing content
+        } else if (price > 0 && offer_price == 0) { // Check if only price exists and offer_price is 0
+            const price_data = `<h4>₹${price}</h4>`;
             $('#price_module').html(price_data); // Use html() instead of append() to replace existing content
         } else {
-            // Handle case where neither price nor offer_price exists
-            // console.log('else')
+            // Handle case where neither price nor offer_price exists or they are both 0
             $('#price_module').empty(); // Clear the price module
         }
     }

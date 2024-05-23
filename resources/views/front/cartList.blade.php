@@ -1,7 +1,8 @@
 @extends('front.layout.app')
    @section('content')
    @php
-       $subtotal = 0;
+       $total_price_excluding_gst = 0;
+       $total_gst_amount = 0;
    @endphp
     <section class="cart_page_table">
         <div class="container">
@@ -24,11 +25,8 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php
-                                            $gst_amount = 0;
-                                        @endphp
                                         @if($cartProductDetails)
-                                            @foreach($cartProductDetails as $item)
+                                            @foreach($cartProductDetails as $key=>$item)
                                                 <tr>
                                                     <td>
                                                         <div class="table_img">
@@ -43,13 +41,20 @@
                                                         ₹{{$item->offer_price?$item->offer_price:$item->price}}
                                                         @php
                                                             $price = $item->offer_price?$item->offer_price:$item->price;
-                                                            $gst = $item->productDetails?$item->productDetails->gst:0;
+                                                            // $gst = $item->productDetails?$item->productDetails->gst:0;
                                                            // Calculate GST amount
-                                                            $gst_amount += ($price * $gst) / 100;
+                                                        //    $gst_amount = ($price * $gst) / 100;
+                                                            // Accumulate GST amount for all items
+                                                            // $total_gst_amount += $gst_amount;
+
+                                                            // Calculate price excluding GST for the current item
+                                                            // $price_excluding_gst = $price - $gst_amount;
+                                                            // Accumulate price excluding GST for all items
+                                                            $total_price_excluding_gst += $price;
                                                         @endphp
                                                     </td>
                                                     <td>
-                                                        <input type="hidden" name="variation[]" value="{{$item->id}}">
+                                                        <input type="hidden" name="variation[]" value="{{$item->product_variation_id}}">
                                                         <select class="coupon_code" name="coupons[]">
                                                             <option value="" data-amount="0" data-id="" selected>Select coupon</option>
                                                             @foreach($couponData as $coupon)
@@ -74,12 +79,6 @@
                                                         </a>
                                                     </td>
                                                 </tr>
-                                                @php
-                                                    $subtotal = 0;
-                                                    foreach($cartProductDetails as $item) {
-                                                        $subtotal += $item->offer_price?$item->offer_price:$item->price;
-                                                    }
-                                                @endphp
                                             @endforeach
                                         @endif   
                                     </tbody>
@@ -92,7 +91,7 @@
                             <div class="cart_table_shipping">
                                 <div class="cart_table_total_text">
                                     <h4>Subtotal <span>Exclude GST</span></h4>
-                                    <h5>₹ <span id="sub_total">{{number_format($subtotal, 2, '.', '')}}</span></h5>
+                                    <h5>₹ <span id="sub_total">{{number_format($total_price_excluding_gst, 2, '.', '')}}</span></h5>
                                     <input type="hidden" name="final_sub_total" id="final_sub_total" value="0">
                                 </div>
                             </div>
@@ -109,6 +108,13 @@
                                 </div>
                                 <span>Add ₹130 more for FREE Shipping.</span>
                             </div> --}}
+                            {{-- <div class="cart_table_shipping">
+                                <div class="cart_table_total_text">
+                                    <h4>GST</h4>
+                                    <h5>₹ <span id="gst_amount">{{number_format($total_gst_amount, 2, '.', '')}}</span></h5> --}}
+                                    <input type="hidden" name="final_gst_amount" id="final_gst_amount" value="0">
+                                {{-- </div>
+                            </div> --}}
                             <div class="cart_table_shipping">
                                 <div class="cart_table_total_text">
                                     <h4>Voucher Coupon</h4>
@@ -118,15 +124,8 @@
                             </div>
                             <div class="cart_table_shipping">
                                 <div class="cart_table_total_text">
-                                    <h4>GST</h4>
-                                    <h5>₹ <span id="gst_amount">{{number_format($gst_amount, 2, '.', '')}}</span></h5>
-                                    <input type="hidden" name="final_gst_amount" id="final_gst_amount" value="0">
-                                </div>
-                            </div>
-                            <div class="cart_table_shipping">
-                                <div class="cart_table_total_text">
                                     <h4>Total</h4>
-                                    <h5>₹ <span id="total_amount">{{number_format($subtotal, 2, '.', '')}}</span></h5>
+                                    <h5>₹ <span id="total_amount">{{number_format($total_price_excluding_gst, 2, '.', '')}}</span></h5>
                                     <input type="hidden" name="final_total_amount" id="final_total_amount" value="0">
                                 </div>
                             </div>
@@ -225,11 +224,12 @@
             var sub_total = $('#sub_total').text(); 
             var total_amount = parseFloat(sub_total);
             var total_amount = parseFloat(sub_total)-parseFloat(coupon_amount);
-            var final_amount = parseFloat(total_amount)+parseFloat(gst_amount);
+            // var final_amount = parseFloat(total_amount)+parseFloat(gst_amount);
+            var final_amount = parseFloat(total_amount);
             $('#total_amount').text(final_amount.toFixed(2)); 
             $('#final_sub_total').val(sub_total); 
             $('#final_coupon_amount').val(coupon_amount); 
-            $('#final_gst_amount').val(gst_amount); 
+            // $('#final_gst_amount').val(gst_amount); 
             $('#final_total_amount').val(final_amount); 
         }
         $(document).ready(function() {

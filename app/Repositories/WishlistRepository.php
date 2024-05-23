@@ -19,7 +19,7 @@ class WishlistRepository implements WishlistInterface
     
             if ($wishlistExists) {
                 $newEntry = Wishlist::destroy($wishlistExists->id);
-                return true;
+                return false;
             } else {
                 $newEntry = new Wishlist;
                 $newEntry->product_id = $productId;

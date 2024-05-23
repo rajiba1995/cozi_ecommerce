@@ -90,7 +90,6 @@ class CheckoutRepository implements CheckoutInterface
         $collectedData = collect($data);
 
         DB::beginTransaction();
-
         try {
             $settings = Settings::all();
 
