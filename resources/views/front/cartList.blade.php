@@ -20,7 +20,7 @@
                                 </thead>
                                 <tbody>
                                 @if($cartProductDetails)
-                                    @foreach($cartProductDetails as $item)
+                                    @forelse($cartProductDetails as $item)
                                     <tr>
                                         <td>
                                             <div class="table_img">
@@ -61,7 +61,11 @@
                                                 $subtotal += $item->offer_price;
                                             }
                                         @endphp
-                                    @endforeach
+                                        @empty
+                                            <tr>
+                                                <td colspan="7">No products found</td>
+                                            </tr>
+                                        @endforelse
                                 @endif   
                            
                                                             </tbody>

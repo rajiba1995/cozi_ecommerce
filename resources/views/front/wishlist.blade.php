@@ -57,7 +57,7 @@
                             <div class="profile_info_box">
                                 <h3>Wishlist</h3>
                                 @if($data)
-                                @foreach($data as $item)
+                                @forelse($data as $item)
                                 <div class="wishlist-card">
                                     <div class="wishlist-card-body">
                                         <div class="wishlist-product-card">
@@ -104,7 +104,13 @@
                                         @endif  
                                     </div>
                                 </div>
-                                @endforeach
+                                @empty
+                                        <div class="wishlist-card">
+                                            <div class="wishlist-card-body">
+                                                <h4 class="text-center">No products found</h4>
+                                            </div>
+                                        </div>
+                                    @endforelse
                                 @endif
                             </div>
                         </form>
