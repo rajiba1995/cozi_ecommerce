@@ -40,11 +40,11 @@
                     </div>
                     <div class="row">
                         <div class="check_out col-md-4 col-12">
-                            <input class="check_out_input" type="email" placeholder="Email*" name="email" id="email" value="{{$user->email ?? ''}}">
+                            <input class="check_out_input" type="email" placeholder="Email*" name="email" value="{{$user->email ?? ''}}">
                             {{-- @error('email')<p class="small text-danger mb-0">{{$message}}</p>@enderror --}}
                         </div>
                         <div class="check_out col-md-4 col-12">
-                            <input class="check_out_input" type="tel" placeholder="Contact Number*" name="mobile" id="mobile" value="{{$user->mobile ?? ''}}">
+                            <input class="check_out_input" type="tel" placeholder="Contact Number*" name="mobile" value="{{$user->mobile ?? ''}}">
                             {{-- @error('mobile')<p class="small text-danger mb-0">{{$message}}</p>@enderror --}}
                         </div>
                     </div>
@@ -137,7 +137,7 @@
                         <input type="hidden" name="razorpay_callback_url" value="">
                         <button type="submit" class="orderplace" id="orderplace">Place Order</button>
                         <a href="{{route('front.cart.index')}}" class="orderreturn">Return to Cart</a>
-                        {{-- <a href="#" class="orderreturn" id="rzp-button1">Online</a> --}}
+                        <a href="#" class="orderreturn" id="rzp-button1">Online</a>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -361,13 +361,13 @@
                 }
             });
         });
-        $(document).on('click', '#orderplace', function(e) {
+        $(document).on('click', '#rzp-button1', function(e) {
             e.preventDefault();
             // razorpay payment options
             if ($("#paymentForm").valid()) {
                 var paymentOptions = {
+                    // "key": "rzp_test_FUwg5zjKBrNRVm",
                     "key": "rzp_test_jIwVtRPfWGhVHO",
-                    // "key": "{{env('RAZORPAY_KEY')}}",
                     "amount":  "{{intval($final_amount*100)}}",
                     "currency": "INR",
                     "name": "LUX Industries Limited",
@@ -378,29 +378,25 @@
                         console.log(response);
                         $('input[name="payment_method"]').val('online_payment');
                         $('input[name="razorpay_payment_id"]').val(response.razorpay_payment_id);
-                        // $.get('{{ route("front.payment.success") }}', {
-                        //     razorpay_payment_id: response.razorpay_payment_id,
-                        //     razorpay_order_id: response.razorpay_order_id,
-                        //     razorpay_signature: response.razorpay_signature
-                        // }).done(function() {
-                        //     window.location.href = '{{ route("front.payment.success") }}';
-                        // }).fail(function() {
-                        //     window.location.href = '{{ route("front.payment.failure") }}';
-                        // });
-                        $('#paymentForm').submit();
+                        $.post('{{ route("front.payment.success") }}', {
+                            _token: '{{ csrf_token() }}',
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_signature: response.razorpay_signature
+                        }).done(function() {
+                            window.location.href = '{{ route("front.payment.success") }}';
+                        }).fail(function() {
+                            window.location.href = '{{ route("front.payment.failure") }}';
+                        });
+                        // $('#paymentForm').submit();
                     },
                     "prefill": {
-                        "email": $('#email').val(),
-                        "contact": $('#mobile').val()
-                        // "email": 'test@email.com',
-                        // "contact": '8617207525'
+                        "email": 'test@email.com',
+                        "contact": '8617207525'
                     },
                     "notes": {
                         "address": "Razorpay Corporate Office"
                     },
-                    "theme": {
-                        "color": "#050e9e"
-                    }
                 };
                 var rzp1 = new Razorpay(paymentOptions);
 

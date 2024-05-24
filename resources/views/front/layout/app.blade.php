@@ -32,8 +32,11 @@
                 <a href="{{asset('/')}}" class="logo_img">
                     <img src="{{asset('frontend/images/logo1.png')}}" alt="logo">
                 </a>
+
                 <form action="" class="search_from">
-                    <input type="search" id="search" class="search_input" placeholder="Search for products">
+                    <input type="search" id="product-input" class="search_input" placeholder="Search for products">
+                    <button type="submit" class="search_btn">GO</button>
+                    <div id="autocomplete-list" class="autocomplete-items"></div>
                 </form>
                 <div class="wishlist">
                     <div class="search_for_mob">
@@ -56,6 +59,7 @@
                                                 <input type="submit" class="mobile_search_btn" value="Search">
                                             </form>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -74,8 +78,9 @@
                         @endif
                     </div>
                     <div class="header_user header_user_menu">
-                        <a class="header_user_menu_a dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" href="#">
-                            <svg width="30" height="30" viewBox="0 0 30 30" fill="none"
+                          
+                        
+                        <a class="header_user_menu_a dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" href="#"><svg width="30" height="30" viewBox="0 0 30 30" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
                                     d="M25 26.25V23.75C25 22.4239 24.4732 21.1521 23.5355 20.2145C22.5979 19.2768 21.3261 18.75 20 18.75H10C8.67392 18.75 7.40215 19.2768 6.46447 20.2145C5.52678 21.1521 5 22.4239 5 23.75V26.25"
@@ -159,8 +164,69 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.3/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.24/jquery.autocomplete.min.js"></script> -->
     <script>
+
+
+ // script.js
+ document.addEventListener('DOMContentLoaded', () => {
+    const productInput = document.getElementById('product-input');
+    const autocompleteList = document.getElementById('autocomplete-list');
+
+    const products = [
+        { title: "Andorra Product", styleId: "AD123", price: "₹10.00", image: "path/to/andorra.jpg" },
+        { title: "Barcelona Product", styleId: "BC456", price: "₹20.00", image: "path/to/barcelona.jpg" },
+        { title: "Copenhagen Product", styleId: "CP789", price: "₹30.00", image: "path/to/copenhagen.jpg" }
+        // Add more products as needed
+    ];
+
+    productInput.addEventListener('input', function() {
+        const inputValue = this.value.toLowerCase();
+        autocompleteList.innerHTML = '';
+
+        if (!inputValue) {
+            return false;
+        }
+
+        const filteredProducts = products.filter(product =>
+            product.title.toLowerCase().includes(inputValue) ||
+            product.styleId.toLowerCase().includes(inputValue) ||
+            product.price.toLowerCase().includes(inputValue)
+        );
+
+        filteredProducts.forEach(product => {
+            const itemDiv = document.createElement('div');
+            itemDiv.classList.add('autocomplete-item');
+
+            itemDiv.innerHTML = `
+                <img src="${product.image}" alt="${product.title}">
+                <div>
+                    <h2>${product.title}</h2>
+                    <h6>Style ID: ${product.styleId}</h6>
+                    <h5>${product.price}</h5>
+                </div>
+            `;
+
+            itemDiv.addEventListener('click', function() {
+                productInput.value = product.title;
+                autocompleteList.innerHTML = '';
+            });
+
+            autocompleteList.appendChild(itemDiv);
+        });
+    });
+
+    document.addEventListener('click', function(e) {
+        if (e.target !== productInput) {
+            autocompleteList.innerHTML = '';
+        }
+    });
+});
+
         $(document).ready(function() {
+
             toastr.options = {
                 "closeButton": false,
                 "debug": false,
@@ -183,28 +249,26 @@
                 toastr.success("{{ Session::get('success') }}");
             @elseif (Session::get('failure'))
                 toastr.error("{{ Session::get('failure') }}");
-            @elseif (Session::get('warning'))
-                toastr.warning("{{ Session::get('warning') }}");
             @endif
         });
     </script>
     
     @yield('script')
 <script>
-    // $(document).ready(()=>{
-    //     $.ajax({
-    //         type: 'GET',
-    //         url: '/load-cart/' + userId,
-    //         success: function(response) {
-    //             // Update the cart count in your UI
-    //             console.log(response)
-    //             $('#cartCount').html(response.cartCount);
-    //         },
-    //         error: function(xhr, status, error) {
-    //             console.error(error);
-    //         }
-    //     });
-    // })
+    $(document).ready(()=>{
+        $.ajax({
+            type: 'GET',
+            url: '/load-cart/' + userId,
+            success: function(response) {
+                // Update the cart count in your UI
+                console.log(response)
+                $('#cartCount').html(response.cartCount);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    })
         
 </script>
 
@@ -212,21 +276,21 @@
   <!-- <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script> -->
   <script>
-    var availableTags = [
-    ];
-    $.ajax({
-        type:'GET',
-        url:"{{route('front.product.search')}}",
-        success:function(response){
-            console.log(response);
-            search(response.data);
-        }
-    });
-    function search(availableTags){
-        $( "#search" ).autocomplete({
-      source: availableTags
-    });
-    }
+    // var availableTags = [
+    // ];
+    // $.ajax({
+    //     type:'GET',
+    //     url:"{{route('front.product.search')}}",
+    //     success:function(response){
+    //         console.log(response);
+    //         search(response.data);
+    //     }
+    // });
+    // function search(availableTags){
+    //     $( "#search" ).autocomplete({
+    //   source: availableTags
+    // });
+    // }
   </script>
 
 </body>

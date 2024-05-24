@@ -25,11 +25,61 @@ class CheckoutController extends Controller
     {
         // $data = $this->cartRepository->viewByIp();
         $userId = "";
+        $order_id = "";
+        
         if (auth()->guard('web')->check()) {
             $userId = auth()->guard('web')->user()->id;
             $user = auth()->guard('web')->user();
             $user_checkout = DB::table('checkout')->where('user_id', $userId)->first();
-            return view('front.checkout.index', compact('user_checkout', 'user'));
+            $final_amount = $user_checkout?$user_checkout->final_amount:0;
+            $final_amount = 1;
+            // Order ID Generate
+            $razorpayKey = env('RAZORPAY_KEY');
+            $razorpaySecret = env('RAZORPAY_SECRET');
+
+            // Prepare the data for the order
+            $orderData = [
+                'receipt'         => 'rcptid_' . time(),
+                // 'amount'          => $request->input('amount') * 100, // amount in the smallest currency unit
+                'amount'          => 1 * 100, // amount in the smallest currency unit
+                'currency'        => 'INR',
+                'payment_capture' => 1 // auto capture
+            ];
+
+            // Encode the order data
+            $jsonData = json_encode($orderData);
+            
+            // Initialize cURL
+            $ch = curl_init();
+
+            // Set cURL options
+            curl_setopt($ch, CURLOPT_URL, 'https://api.razorpay.com/v1/orders');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Authorization: Basic ' . base64_encode("$razorpayKey:$razorpaySecret")
+            ]);
+
+            // Execute the cURL request
+            $response = curl_exec($ch);
+            // Check for errors
+            if ($response === false) {
+                $errorMessage = curl_error($ch);
+                $order_id = "";
+            }
+
+            // Decode the response
+            $responseData = json_decode($response, true);
+
+            // Check if order creation was successful
+            if (isset($responseData['id'])) {
+                $order_id = $responseData['id'];
+            } else {
+                $order_id = "";
+            }
+            return view('front.checkout.index', compact('user_checkout', 'user', 'order_id', 'final_amount'));
             // $data = $this->cartRepository->viewByUserId(auth()->guard('web')->user()->id);
         }else{
             return redirect()->route('front.user.login');
@@ -125,6 +175,8 @@ class CheckoutController extends Controller
     }
     // New Payment Gateway
     public function createOrder(Request $request){
+        // dd($request->all());
+        return view('front.payment.success');
         $razorpayKey = env('RAZORPAY_KEY');
         $razorpaySecret = env('RAZORPAY_SECRET');
 
@@ -181,50 +233,23 @@ class CheckoutController extends Controller
         $paymentId = $request->input('razorpay_payment_id');
         $orderId = $request->input('razorpay_order_id');
 
-        // Your Razorpay API key and secret
-        $razorpayKey = env('RAZORPAY_KEY');
-        $razorpaySecret = env('RAZORPAY_SECRET');
-
-        // Prepare the data for signature verification
-        $data = [
-            'razorpay_order_id' => $orderId,
-            'razorpay_payment_id' => $paymentId,
-            'razorpay_signature' => $signature
-        ];
-        // Encode the data
-        $jsonData = json_encode($data);
-
-        // Initialize cURL
-        $ch = curl_init();
-
-        // Set cURL options
-        curl_setopt($ch, CURLOPT_URL, 'https://api.razorpay.com/v1/payments/'.$paymentId.'/capture');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Authorization: Basic ' . base64_encode("$razorpayKey:$razorpaySecret")
-        ]);
-
-        // Execute the cURL request
-        $response = curl_exec($ch);
-
-        // Check for errors
-        if ($response === false) {
-            $errorMessage = curl_error($ch);
-            return view('payment.failure', ['message' => $errorMessage]);
-        }
-
-        // Decode the response
-        $responseData = json_decode($response, true);
-        // Check if payment capture was successful
-        if (isset($responseData['status']) && $responseData['status'] === 'captured') {
+        // Verify the signature manually
+        $generated_signature = hash_hmac('sha256', $orderId . '|' . $paymentId, env('RAZORPAY_SECRET'));
+        dd($generated_signature);
+        if ($generated_signature === $signature) {
             // Payment is successful, update your database
             // ...
 
             return view('payment.success', compact('paymentId'));
         } else {
+            // Log detailed error information
+            Log::error('Razorpay Payment Verification Failed', [
+                'message' => 'Signature verification failed',
+                'payment_id' => $paymentId,
+                'order_id' => $orderId,
+                'request' => $request->all()
+            ]);
+
             // Payment verification failed
             return view('payment.failure', ['message' => 'Payment verification failed']);
         }

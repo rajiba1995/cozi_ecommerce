@@ -24,7 +24,7 @@
 <section class="cart_page_table">
     <div class="container">
         {{-- <form action="{{route('front.checkout.store')}}" method="POST" class="check_out_from" id="paymentForm"> --}}
-        <form action="{{route('front.payment.createOrder')}}" method="POST" class="check_out_from" id="paymentForm" >
+        <form class="check_out_from" id="paymentForm" >
             <div class="row">
                 <div class="col-lg-8">
                     @csrf
@@ -40,11 +40,11 @@
                     </div>
                     <div class="row">
                         <div class="check_out col-md-4 col-12">
-                            <input class="check_out_input" type="email" placeholder="Email*" name="email" id="email" value="{{$user->email ?? ''}}">
+                            <input class="check_out_input" type="email" placeholder="Email*" name="email" value="{{$user->email ?? ''}}">
                             {{-- @error('email')<p class="small text-danger mb-0">{{$message}}</p>@enderror --}}
                         </div>
                         <div class="check_out col-md-4 col-12">
-                            <input class="check_out_input" type="tel" placeholder="Contact Number*" name="mobile" id="mobile" value="{{$user->mobile ?? ''}}">
+                            <input class="check_out_input" type="tel" placeholder="Contact Number*" name="mobile" value="{{$user->mobile ?? ''}}">
                             {{-- @error('mobile')<p class="small text-danger mb-0">{{$message}}</p>@enderror --}}
                         </div>
                     </div>
@@ -137,7 +137,7 @@
                         <input type="hidden" name="razorpay_callback_url" value="">
                         <button type="submit" class="orderplace" id="orderplace">Place Order</button>
                         <a href="{{route('front.cart.index')}}" class="orderreturn">Return to Cart</a>
-                        {{-- <a href="#" class="orderreturn" id="rzp-button1">Online</a> --}}
+                        <a href="{{route('front.cart.index')}}" class="orderreturn" id="rzp-button1">Online</a>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -358,155 +358,122 @@
                     shipping_country: {
                         required: "Please enter your shipping country"
                     }
+                },
+                submitHandler: function(form) {
+                    // Perform the AJAX request if form is valid
+                    var amount = $('#final_amount').val();
+                    var email = $('input[name=email]').val();
+                    var mobile = $('input[name=mobile]').val();
+                    var fname = $('input[name=fname]').val();
+                    var lname = $('input[name=lname]').val();
+                    $('#orderplace').prop('disabled', true);
+                    $('#orderplace').text('Please wait..');
+
+                    // Merge fname and lname into a full name
+                    var fullName = fname + ' ' + lname;
+                    $.ajax({
+                        url: '{{ route("front.payment.createOrder") }}',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            amount: amount
+                        },
+                        success: function(data) {
+                            $('#orderplace').prop('disabled', false);
+                            $('#orderplace').text('Place Order');
+                            if (data.orderId) {
+                                var options = {
+                                    "key": "{{ env('RAZORPAY_KEY') }}",
+                                    "amount": data.amount * 100,
+                                    "currency": "INR",
+                                    "name": "LUX Industries Limited",
+                                    "description": "Test Transaction",
+                                    "image": "https://techmantra.co/dev/cozi-ecommerce/public/images/cozi-payment.png",
+                                    "order_id": data.orderId,
+                                    "handler": function (response){
+                                        $.post('{{ route("front.payment.success") }}', {
+                                            _token: '{{ csrf_token() }}',
+                                            razorpay_payment_id: response.razorpay_payment_id,
+                                            razorpay_order_id: response.razorpay_order_id,
+                                            razorpay_signature: response.razorpay_signature
+                                        }).done(function() {
+                                            window.location.href = '{{ route("front.payment.success") }}';
+                                        }).fail(function() {
+                                            window.location.href = '{{ route("front.payment.failure") }}';
+                                        });
+                                    },
+                                    "prefill": {
+                                        "name": fullName,
+                                        "email": email,
+                                        "contact": mobile
+                                    },
+                                    "notes": {
+                                        "address": "Razorpay Corporate Office"
+                                    },
+                                    "theme": {
+                                        "color": "#050e9e"
+                                    }
+                                };
+                                var rzp1 = new Razorpay(options);
+                                rzp1.on('payment.failed', function (response){
+                                    alert(response.error.code);
+                                    alert(response.error.description);
+                                    alert(response.error.source);
+                                    alert(response.error.step);
+                                    alert(response.error.reason);
+                                    alert(response.error.metadata.order_id);
+                                    alert(response.error.metadata.payment_id);
+                                });
+                                rzp1.open();
+                            } else {
+                                alert('Order creation failed. Please try again.');
+                            }
+                        }
+                    });
                 }
             });
         });
-        $(document).on('click', '#orderplace', function(e) {
-            e.preventDefault();
-            // razorpay payment options
-            if ($("#paymentForm").valid()) {
-                var paymentOptions = {
-                    "key": "rzp_test_jIwVtRPfWGhVHO",
-                    // "key": "{{env('RAZORPAY_KEY')}}",
-                    "amount":  "{{intval($final_amount*100)}}",
-                    "currency": "INR",
-                    "name": "LUX Industries Limited",
-                    "description": "Online payment",
-                    "image": "https://techmantra.co/dev/cozi-ecommerce/public/images/cozi-payment.png",
-                    // "order_id": "{{$order_id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-                    "handler": function (response){
-                        console.log(response);
-                        $('input[name="payment_method"]').val('online_payment');
-                        $('input[name="razorpay_payment_id"]').val(response.razorpay_payment_id);
-                        // $.get('{{ route("front.payment.success") }}', {
-                        //     razorpay_payment_id: response.razorpay_payment_id,
-                        //     razorpay_order_id: response.razorpay_order_id,
-                        //     razorpay_signature: response.razorpay_signature
-                        // }).done(function() {
-                        //     window.location.href = '{{ route("front.payment.success") }}';
-                        // }).fail(function() {
-                        //     window.location.href = '{{ route("front.payment.failure") }}';
-                        // });
-                        $('#paymentForm').submit();
-                    },
-                    "prefill": {
-                        "email": $('#email').val(),
-                        "contact": $('#mobile').val()
-                        // "email": 'test@email.com',
-                        // "contact": '8617207525'
-                    },
-                    "notes": {
-                        "address": "Razorpay Corporate Office"
-                    },
-                    "theme": {
-                        "color": "#050e9e"
-                    }
-                };
-                var rzp1 = new Razorpay(paymentOptions);
+        // $(document).on('click', '#rzp-button1', function(e) {
+        //     e.preventDefault();
+        //     // razorpay payment options
+        //     if ($("#paymentForm").valid()) {
+        //         var paymentOptions = {
+        //             // "key": "rzp_test_FUwg5zjKBrNRVm",
+        //             "key": "rzp_test_jIwVtRPfWGhVHO",
+        //             "amount": '100',
+        //             "currency": "INR",
+        //             "name": "ONN",
+        //             "description": "Online payment",
+        //             "image": "https://techmantra.co/dev/cozi-ecommerce/public/images/cozi-payment.png",
+        //             // "order_id": "order_9A33XWu170gUtm", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        //             "handler": function (response){
+        //                 console.log(response);
+        //                 $('input[name="payment_method"]').val('online_payment');
+        //                 $('input[name="razorpay_payment_id"]').val(response.razorpay_payment_id);
+        //                 $('#paymentForm').submit();
+        //             },
+        //             "prefill": {
+        //                 "email": 'test@email.com',
+        //                 "contact": '8617207525'
+        //             },
+        //             "notes": {
+        //                 "address": "Razorpay Corporate Office"
+        //             },
+        //         };
 
-                rzp1.on('payment.failed', function (response){
-                    // alert('OOPS ! something happened');
-                    toastFire('info', 'Something happened');
-                });
-                rzp1.open();
-            }
-        });
+        //         var rzp1 = new Razorpay(paymentOptions);
+
+        //         rzp1.on('payment.failed', function (response){
+        //             // alert('OOPS ! something happened');
+        //             toastFire('info', 'Something happened');
+        //         });
+        //         rzp1.open();
+        //     }
+        // });
         function fetchEmail() {
             alert('email>>'+$('#checkoutEmail').val());
             return $('#checkoutEmail').val();
         }
         
-
-        // billing pinode detail fetch
-        $('input[name="billing_pin"]').on('keyup', ()=>{
-            var pincode = $('input[name="billing_pin"]').val();
-
-            if (pincode.length == 6) {
-                toastFire('info', 'Please wait...');
-                $('input[name="billing_pin"]').css('borderColor', '#4caf50').css('boxShadow', '0 0 0 0.2rem #4caf5057');
-
-                $.ajax({
-                    url: 'https://api.postalpincode.in/pincode/'+pincode,
-                    method: 'GET',
-                    success: function(result){
-                        if(result[0].Message != 'No records found') {
-                            // state & country added
-                            $('input[name="billing_state"]').val(result[0].PostOffice[0].State);
-                            $('input[name="billing_country"]').val(result[0].PostOffice[0].Country);
-
-                            // fetch city
-                            $.ajax({
-                                url: "{{url('/')}}/state/"+result[0].PostOffice[0].State+"/detail",
-                                type: 'GET',
-                                success: function(result) {
-                                    let content = `
-                                    <select class="form-control readonly_select active" name="billing_city" readonly>`;
-
-                                        $.each(result.data, (key, value) => {
-                                            content += `<option value="${value.city_name}">${value.city_name}</option>`;
-                                        });
-
-                                    content += `</select>
-                                    <label class="floating-label">City *</label>
-                                    `;
-
-                                    $('#loadCities').html(content);
-                                    $('.readonly_select.active').select2();
-                                    // console.log(result);
-                                }
-                            });
-
-                            // $('input[name="billing_city"]').val(result[0].PostOffice[0].District);
-                        } else {
-                            toastFire('warning', 'Enter valid pincode');
-                            $('input[name="billing_pin"]').css('borderColor', 'red').css('boxShadow', '0 0 0 0.2rem #dc34345c');
-                            $('input[name="billing_state"]').val('');
-                            $('input[name="billing_country"]').val('');
-                            $('input[name="billing_city"]').val('');
-                        }
-                    }
-                });
-                swal.close();
-            } else {
-                $('input[name="billing_pin"]').css('borderColor', 'red').css('boxShadow', '0 0 0 0.2rem #dc34345c');
-				$('input[name="billing_state"]').val('');
-				$('input[name="billing_country"]').val('');
-                $('input[name="billing_city"]').val('');
-            }
-        });
-
-        // shipping pinode detail fetch
-        $('input[name="shipping_pin"]').on('keyup', ()=>{
-            var pincode = $('input[name="shipping_pin"]').val();
-
-            if (pincode.length == 6) {
-                toastFire('info', 'Please wait...');
-                $('input[name="shipping_pin"]').css('borderColor', '#4caf50').css('boxShadow', '0 0 0 0.2rem #4caf5057');
-
-                $.ajax({
-                    url: 'https://api.postalpincode.in/pincode/'+pincode,
-                    method: 'GET',
-                    success: function(result){
-                        if(result[0].Message != 'No records found'){
-                            $('input[name="shipping_state"]').val(result[0].PostOffice[0].State);
-                            $('input[name="shipping_country"]').val(result[0].PostOffice[0].Country);
-                            $('input[name="shipping_city"]').val(result[0].PostOffice[0].District);
-                        } else {
-                            toastFire('warning', 'Enter valid pincode');
-                            $('input[name="shipping_pin"]').css('borderColor', 'red').css('boxShadow', '0 0 0 0.2rem #dc34345c');
-                            $('input[name="shipping_state"]').val('');
-                            $('input[name="shipping_country"]').val('');
-                            $('input[name="shipping_city"]').val('');
-                        }
-                    }
-                });
-                swal.close();
-            } else {
-                $('input[name="shipping_pin"]').css('borderColor', 'red').css('boxShadow', '0 0 0 0.2rem #dc34345c');
-				$('input[name="shipping_state"]').val('');
-				$('input[name="shipping_country"]').val('');
-                $('input[name="shipping_city"]').val('');
-            }
-        });
     </script>
 @endsection
